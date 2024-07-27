@@ -1,0 +1,149 @@
+<!DOCTYPE>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login Page</title>
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
+			
+		* {
+			font-family: 'Poppins', sans-serif;
+		}
+		
+		body{
+			background-color: {{=session.layout_color}}
+		}
+
+		.login-container {
+			max-width: 400px;
+			padding-top: 80px;
+		}
+
+		.login-card {
+			padding: 40px;
+			border-radius: 20px;
+			box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+			background-color: {{=session.layout_color}}
+		}
+
+		.login-card h2 {
+			text-align: center;
+			font-weight: 300;
+			color: {{=session.button_color}}
+		}
+
+		.login-card form {
+			margin-top: 20px;
+		}
+
+		.login-card form input {
+			padding: 10px;
+			justify-content: center;
+			font-size: 14px;
+			font-weight: 300;
+		}
+
+		.login-card label {
+			font-weight: 500;
+		}
+
+		.login-card .btn-primary {
+			width: 50%;
+			margin: 20px 10px 10px 70px;
+			font-weight: 300;
+			border-color: black;
+			border-radius: 20px;
+			border-width: 1px;
+			align-items: center;
+			color: {{=session.button_text_color}};
+			background-color: {{=session.button_color}}
+		}
+
+		.login-card .btn-primary:hover {
+			background-color: white;     		
+			box-shadow: 0 0 20px rgba(139, 202, 132, 0.5), 0 0 20px rgba(139, 202, 132, 0.5), 0 0 20px rgba(139, 202, 132, 0.5);
+			color: {{=session.text_color}}
+		}
+
+		.login-card .form-control {
+			border-radius: 20px;
+			padding-bottom: 10px;
+		}
+	</style>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			var flashMessage = document.getElementById("flashMessage");
+
+			if (flashMessage) {
+				flashMessage.style.display = "inline";
+				
+				setTimeout(function() {
+					flashMessage.style.display = "none";
+				}, 3000); // 3000 milliseconds = 3 seconds
+			}
+		});
+	</script>
+</head>
+
+<body>
+	<div class="container login-container">
+		<div class="card login-card">
+			<h2>Login</h2>
+			<p></p>
+			<form action="{{=URL(c='default',f='login')}}" method="POST">
+				<div class="form-group">
+					<input type="hidden" id="c_id" name="c_id" value="xyz">
+				</div>
+				<div class="form-group">
+					<label for="ID" >User ID:</label>
+					<input type="text" class="form-control" id="u_id" name="u_id" placeholder="Enter your ID" required>
+				</div>
+				<div class="form-group">
+					<label for="password">Password:</label>
+					<input type="password" class="form-control" id="u_pass" name="u_pass" placeholder="Enter your password" required>
+				</div>
+				<button type="submit" class="btn btn-primary">Login</button>
+			</form>
+		</div>
+		{{if session.error_flash:}}
+			<h4 id="flashMessage" style="font-size: 14px; font-weight: 400; margin-top: 5px; color: #d42d22; margin-left: 140px;">{{=session.error_flash}}</h4>
+			{{session.error_flash = None}}
+		{{pass}}
+	</div>
+
+	<!-- Forgot Password Modal -->
+	<div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="forgotPasswordModalLabel">Forgot Password?</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>Enter your email address below and we'll send you a link to reset your password.</p>
+					<div class="form-group">
+						<label for="email">Email Address:</label>
+						<input type="email" class="form-control" id="email" placeholder="Enter your email">
+					</div>
+				</div>
+				<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary">Send Reset Link</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Add Bootstrap JS and Popper.js CDN links -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

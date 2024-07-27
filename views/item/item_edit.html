@@ -1,0 +1,113 @@
+{{extend 'layout.html'}}
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
+  <tr height="30px" >
+    <td width="500"><span class="blackCatTitle" style="font-size: medium;  ;">Item Edit</span></td>
+    <form action="{{=URL(c='item',f='item')}}" method="post">
+    <td width="380" align="right"><input name="" type="submit"  value="Back"/></td>
+	</form>
+    <td>&nbsp;</td>
+  </tr>
+  <tr  height="1px" style="background-color:#CCCCCC;">
+	    <td colspan="3" ></td>
+  </tr>
+  </table>
+  
+  <form action="{{=URL(c='item',f='item_edit', args=[id])}}">
+	<table width="100%" height="500px"  border="0" cellspacing="0" cellpadding="0" class="page_color"  >
+		<tr height="100%"  style="vertical-align:top;">
+		  <td>
+		  <table width="100%"  border="0" cellpadding="0" cellspacing="0"  >
+			
+			<tr>
+			  <td width="5">&nbsp;</td>
+			  <td width="900" valign="top">
+	  
+			  <br /> 
+			  <table width="900">
+				  <tr>
+                    <td width="600">
+                        <table width="600">
+                           
+                            <tr>
+                
+                                <td width="140" style="padding-top: 5px; padding-bottom: 5px;"> Item ID </td>
+                                {{if item_id == '' or item_id == None or item_id =='None':}}
+                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="text" name="item_id" id="item_id" autocomplete="off" readonly></td>
+                                {{else:}}
+                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="text" name="item_id" id="item_id" value="{{=item_id}}"autocomplete="off" readonly></td>
+                                {{pass}}
+                            </tr>
+                            <tr >
+                
+                                <td width="140" style="padding-top: 5px; padding-bottom: 5px;"> Item Name</td>
+                                {{if item_name == '' or item_name== None or item_name=='None':}}
+                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="text" name="item_name" id="item_name" autocomplete="off" readonly></td>
+                                {{else:}}
+                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="text" name="item_name" id="item_name" value="{{=item_name}}"autocomplete="off" readonly></td>
+                                {{pass}}
+                            </tr>
+                            <tr>
+                                <td width="140" style="padding-top: 5px; padding-bottom: 5px;"> Quantity </td>
+                                {{if qty == '' or qty == None or qty =='None':}}
+                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="number" name="quantity" ></td>
+                                {{pass}}
+                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="number" name="quantity"  value="{{=qty}}"></td>
+                                {{pass}}
+                            </tr>
+                            <tr>
+                                <td width="140" style="padding-top: 5px; padding-bottom: 5px;"> TP Amount</td>
+                                {{if tp_amount == '' or tp_amount == None or tp_amount =='None':}}
+                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="number" name="tp_amount" ></td>
+                                {{else:}}
+                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="number" name="tp_amount" value="{{=tp_amount}}"></td>
+                                {{pass}}
+                            </tr>
+                            <tr>
+                                <td width="140" style="padding-top: 5px; padding-bottom: 5px;"> Vat Amount</td>
+                                {{if vat_amt == '' or vat_amt == None or vat_amt =='None':}}
+                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="number" name="vat_amt" ></td>
+                                {{else:}}
+                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="number" name="vat_amt" value="{{=vat_amt}}"></td>
+                                {{pass}}
+                            </tr>
+
+                            <tr>
+                                <td></td>
+                                <td style=" padding-top: 10px; padding-left: 100px;">
+                                  <div align="left">
+                                    <input type="submit" name="delete_btn" value=" Delete " style="width: 80px; background-color: red; color: white; border-radius: 4px; vertical-align:middle;height:30px ; padding-right: 10px;" onclick="if (!confirm('Do you really want to Delete?')) { return false }">
+
+                                    <input align="right" type="submit" name="update_btn" id="update_btn" value=" Update " style="vertical-align:middle;height:30px ;border-radius:4px; background-color: rgb(85, 189, 116); color: white; width: 80px;"/>
+                                  </div>
+                                </td>
+                              </tr>
+                             
+                          </table>
+                        </td>
+                  
+                  </tr>
+				  
+				  
+                    <tr>
+                        <td width="200"></td>
+                        
+                      </tr>
+					  <!-- <br> -->
+            
+						</table>
+					  </td>
+				  </tr>
+				  </table> 
+			   
+				<br />
+				
+				</td>
+			   </tr>
+		  </table>
+		  
+		  </td>
+		</tr>
+	  </table>
+  </form>
+

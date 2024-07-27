@@ -1,0 +1,186 @@
+{{extend 'layout.html'}}
+
+  
+
+  
+
+  <table width="100%"  border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
+
+  <tr height="30px" >
+
+    <td width="720"><span class="blackCatTitle">Item - Batch Upload</span></td>
+
+	<form action="{{=URL(c='item',f='item')}}" method="post">
+
+	<td align="left">	
+
+	<input name="" type="submit"  value="Back"/>	
+
+	</td>
+
+	</form>
+
+  </tr>
+
+  <tr  height="1px" style="background-color:#CCCCCC;">
+
+	    <td width="720" ></td>
+
+		<td ></td>
+
+  </tr>
+
+  </table>
+
+  
+
+  
+
+  <table width="100%" height="500px"  border="0" cellspacing="0" cellpadding="0" class="page_color"  >
+
+  <tr height="100%"  style="vertical-align:top;">
+
+    <td>
+
+	<table width="100%"  border="0" cellpadding="0" cellspacing="0"  >
+
+      <tr>
+
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+
+      </tr>
+
+      <tr>
+
+        <td>&nbsp;</td>
+
+        <td>
+
+		<!--start-->
+
+
+
+
+
+<table width="750" border="0" cellpadding="0" cellspacing="0" class="page_color">
+
+  <tr>
+
+    <td colspan="2" bgcolor="#DBF0EF">
+
+      <div align="left" class="blackCat"> 
+
+	  &nbsp;Download this <a href="{{=URL('static','item_batch_upload.xls')}}">Excel Template</a> , fillup with data and copy (maximum 100 records)-paste bellow to upload </div>
+
+	  
+
+	
+
+	</td>
+
+  </tr>
+
+
+
+  <tr>
+
+    <td colspan="2"  bgcolor="#C8E8EA" align="center"> <div align="left"><br/>
+
+    </td>
+
+  </tr>
+
+
+
+  <form name="batch_client" id="batch_client" method="post" action="{{=URL(c='item',f='item_batch_upload')}}">
+
+  
+
+    <tr>
+
+      <td colspan="2" bgcolor="#DBF0EF">
+
+	  <textarea name="excel_data" id="excel_data" style="width:750px; height:200px;border-style:solid" ></textarea>
+
+	  </td>
+
+    </tr>
+
+    <tr>		
+
+      <td width="697" bgcolor="#DBF0EF">&nbsp;</td>  
+
+	  
+
+      <td width="61" align="left" bgcolor="#DBF0EF">
+
+	    <input type="submit" name="btn_upload" id="btn_upload" value="Upload" />
+
+		</td>
+
+    </tr>
+
+	</form>
+
+	<tr>
+
+      <td colspan="2" bgcolor="#DBF0EF">&nbsp;</td>
+
+	<tr>
+
+      <td colspan="2" bgcolor="#DBF0EF">
+
+	  &nbsp;Total Record:{{=total_row}}<br/>
+
+	  &nbsp;Record Saved:{{=count_inserted}}<br/>
+
+	  &nbsp;Record Error:{{=count_error}}
+
+	  </td>
+
+    </tr>
+
+    <tr>
+
+      <td colspan="2" bgcolor="#DBF0EF"><div align="left">&nbsp;Error Details:</div></td>
+
+    </tr>
+
+    <tr>
+
+      <td colspan="2" bgcolor="#DBF0EF"> 
+
+        <textarea type="textarea" name="error_data" id="error_data" style="width:750px; height:200px; border-style:solid;font-size:12px">{{=error_str}}</textarea>
+
+      </td>
+
+    </tr>  
+
+  <tr>
+
+  <td colspan="2">&nbsp;</td>
+
+  </tr>
+
+</table>
+
+
+
+	</td>
+
+  </tr>
+
+</table>
+
+	<!--end-->
+
+	</td>
+
+  </tr>
+
+</table>
+
+
+

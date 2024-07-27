@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{=response.title}}</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.3/themes/base/jquery-ui.min.css" integrity="sha512-8PjjnSP8Bw/WNPxF6wkklW6qlQJdWJc/3w/ZQPvZ/1bjVDkrrSqLe9mfPYrMxtnzsXFPc434+u4FHLnLjXTSsg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+    
+        body {
+            margin: 0;
+        }
+ 
+        .row {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 2;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0;
+            height: 60px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            color: black
+        }
+
+        .row h1 { 
+            margin: 0; 
+            text-align: center;
+            align-items: center;
+            font-size: 35px;
+            font-weight: 400;
+            margin-right: 5px;
+            color: #54B450;
+        }
+
+        .row .img {
+            height: 40px;
+            width: 190px;
+            margin-left: 5px;
+        }
+
+        .row button {
+            border: 0;
+            background-color:white
+        }
+
+        .row button:hover {
+            color: #54B450;
+        }
+
+        .row button span {
+            padding-left: 8px;
+        }
+
+        .main_row{
+            display: flex;
+            flex: 1;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .allbuttonsSection {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            height: 100vh;
+            width: 200px;
+            padding: 10px;
+            text-align: center;
+            color: #000000;
+            background-color: #F5F5F5;
+        }
+
+        .allbuttonsSection .button-container button {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            border: 0;
+            color: black;
+            background-color: #F5F5F5;
+        }
+
+        .allbuttonsSection .button-container button:hover {
+            color: #54B450;
+        }
+
+        .hidden-buttons button {
+            margin-left: 20px;
+            text-decoration: none;
+        }
+
+        .hidden-buttons {
+            display: none;
+        }
+
+        .container-fluid.main-container {
+            padding-left: 200px;
+            margin: 60px 0px 10px 10px;
+        }
+
+        /* Dropdown Button */
+        .dropbtn {
+            /* padding: 10px; */
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            color: #54B450;
+        }
+
+        .fa-caret-down {
+            padding-left: 10px;
+        }
+
+        .dropbtn:hover, .dropbtn:focus {
+            color: #54B450;
+        }
+
+        /* Dropdown Content (Hidden by Default) */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            min-width: 130px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            background-color: white
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 8px 8px;
+            font-size: 13px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            color: #54B450;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn {
+            color: #54B450;
+
+        .fa-arrow-right-from-bracket {
+            padding-left: 8px;
+        }
+
+    </style>
+
+    <div class="row">
+        <a style="text-decoration:none" href="{{=URL(c='default',f='home')}}">
+            <img class="img" src="{{=URL('static/images', 'logo.png')}}" alt="company logo/description">
+        </a>
+        <h1>XYZ</h1>
+        <!-- <div>
+            <a style="text-decoration:none" href="{{=URL(c='default',f='home')}}">
+                <button><i class="fa-solid fa-user"></i><span>{{=session.user_id}}</span></button>   
+            </a>
+            <a style="text-decoration:none" href="{{=URL(c='default',f='logout')}}">
+                <button><i class="fa-solid fa-arrow-right-from-bracket"></i></button>   
+            </a>
+        </div> -->
+        <div class="dropdown">
+            <button class="dropbtn">
+                <i class="fa-solid fa-user"></i><span>{{=session.user_id}}</span>
+                <i class="fa-solid fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a href="{{=URL(c='default',f='logout')}}">
+                    Logout <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</head>
+
+<body>
+
+    {{if response.flash:}}
+    <span id="flashMessage" style="position: fixed; top: 10px; right: 10px; z-index: 1000; background-color:#F5F5F5; color:#54B450; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.5);">{{=response.flash}}</span>
+    {{pass}}
+    {{if session.flash:}}
+    <span id="flashMessage" style="position: fixed; top: 10px; right: 10px; z-index: 1000; background-color: #F5F5F5; color: #54B450; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.5);">{{=session.flash}}</span>
+    {{pass}}
+
+    <div class="main_row">
+        <div class="allbuttonsSection">
+            {{if session.user_type == 'admin' or session.user_type == "Admin" or session.user_type == "ADMIN" :}}
+                <div class="button-container">
+                    <a style="text-decoration:none" href="{{=URL(c='item',f='item')}}">
+                        <button>Item</button>   
+                    </a>
+                </div>
+                <div class="button-container">
+                    <a style="text-decoration:none" href="{{=URL(c='',f='')}}">
+                        <button>Order item</button>   
+                    </a>
+                    <a style="text-decoration:none" href="{{=URL(c='',f='')}}">
+                        <button>Admin User</button>
+                    </a>
+                       
+                </div> 
+                
+                
+                
+            {{elif session.user_type == 'User':}}
+                <div class="button-container">
+                    <div style="width: auto; height: auto;">
+                        <a style="text-decoration:none" href="{{=URL(c='',f='')}}">
+                            <button>item</button>
+                        </a>
+                        <a style="text-decoration:none" href="{{=URL(c='',f='')}}">
+                            <button>Order</button>
+                        </a>
+                        <a style="text-decoration:none" href="{{=URL(c='',f='')}}">
+                            <button>report</button>
+                        </a>
+                        <a style="text-decoration:none" href="{{=URL(c='',f='')}}">
+                            <button>User</button>
+                        </a>
+                    </div>
+
+                </div>
+            {{pass}}
+        </div>
+
+        <div class="container-fluid main-container">
+            {{include}}
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    {{block script}}{{end}}
+</body>
+
+
+<script>
+    function toggleButtons(hiddenButtonsId) {
+        var hiddenButtons = document.getElementById(hiddenButtonsId);
+
+        // Check if the hiddenButtons element is currently hidden
+        var isHidden = hiddenButtons.style.display === '' || hiddenButtons.style.display === 'none';
+
+        // Set the display property based on the current state
+        hiddenButtons.style.display = isHidden ? 'block' : 'none';
+
+        // Optionally, you can hide other hidden-buttons elements
+        var allHiddenButtons = document.querySelectorAll('.hidden-buttons');
+        allHiddenButtons.forEach(function (buttonsContainer) {
+            if (buttonsContainer.id !== hiddenButtonsId && buttonsContainer.style.display === 'block') {
+                buttonsContainer.style.display = 'none';
+            }
+        });
+    }
+    setTimeout(function() {
+        document.getElementById('flashMessage').style.display = 'none';
+    }, 2000);
+</script>
+
+
+
+
+
+</html>

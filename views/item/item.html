@@ -1,0 +1,179 @@
+{{extend 'layout.html'}}
+ 
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
+  <tr height="30px" >
+    <td width="280px"><span class="blackCatTitle">Item
+      
+    </span></td>
+   
+    <td width="10px"></td>
+    <td align="right" width="20px">&nbsp;</td>
+  </tr>
+  <tr  height="1px" style="background-color:#CCCCCC;">
+	    <td ></td><td ></td>
+	    <td width="100" ></td>
+	    <td ></td>
+  </tr>
+</table>
+
+
+<table width="100%" height="500px"  border="0" cellspacing="0" cellpadding="0" class="page_color"  >
+    <tr height="100%"  style="vertical-align:top;">
+        <td>
+            <table width="100%"  border="0" cellpadding="0" cellspacing="0"  >
+                <tr>
+                    <td width="10">&nbsp;</td>
+                    <td valign="top">
+
+          <!--=====INPUT VALUES===========-->
+                        <form action="{{=URL(c='item',f='item')}}">
+                            <table width="800">
+                                <tr>
+                                    <td width="400">
+                                        <table width="400" class="blackCat">
+                                            <tr>
+                                                <td width="140"> Item ID</td>
+                                                <td><input style= "width: 260px;"type="text" name="item_id" id="item_id" autocomplete="off" required></td>
+                                            </tr>
+                                            <tr>
+                                                <td width="140"> Item Name</td>
+                                                <td><input style= "width: 260px;"type="text" name="item_name" id="item_id" autocomplete="off" required></td>
+                                            </tr>
+                                            <tr>
+                                                <td width="140"> Quantity </td>
+                                                <td><input style= "width: 260px;"type="number" name="quantity" required ></td>
+                                            </tr>
+                                            <tr>
+                                                <td width="140"> TP Amount </td>
+                                                <td><input style= "width: 260px;"type="number" name="tp_amount" required ></td>
+                                            </tr>
+                                            <tr>
+                                                <td width="140"> Vat Amount </td>
+                                                <td><input style= "width: 260px;"type="number" name="vat_amount" required></td>
+                                            </tr>
+                                            
+                                            
+                                            <tr>
+                                                <td width="12"></td>
+                                                <td align="left" style="margin-left: 5px;" >
+                                                    <div align="right">
+                                                      <input align="right" type="submit" name="submit" id="submit" value=" Save " style="vertical-align:middle;height:30px ;border-radius:4px; margin-left: 50;"/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            
+                                           
+                                        </table>
+                                    </td>
+    
+    
+                                    
+                                </tr>
+                            </table>
+                        </form>
+                        <!--========END=========-->
+                        <br>
+                        <!--=======FILTER/ALL/DOWNLOAD/BATCHUP==========-->
+                        <table width="80%"  cellpadding="1" cellspacing="1" class="sample_border" >
+		   
+                            <form id="form1" name="form1" method="post" action="{{=URL(c='item',f='item')}}" >
+                             <tr align="left" class="blackCatHead"  height="20px" ;"vertical-align:middle">
+
+            
+
+                               <td width="100" >
+                                {{if session.item_id_filter == '' or session.item_id_filter == 'None' or session.item_id_filter == None :}}
+                                   <input  name="item_id_filter" type="text" id="item_id_filter" size="25" value="" placeholder="Item ID/Name" autocomplete="off" style="width:300px"/>
+                                {{else:}}
+                                    <input  name="item_id_filter" type="text" id="item_id_filter" size="25" value="{{=session.item_id_filter}}" placeholder="Item ID/Name" autocomplete="off" style="width:300px"/>
+                               {{pass}}
+                               
+                               </td>
+                               <td width="100" >
+                                
+                                <input type="submit" name="btn_filter_item" id="btn_filter_item" value="Filter" style="border-radius: 4px; height: 30px;" class="button_update"/>
+                                <input type="submit" name="btn_all" id="btn_all" value="All" style="border-radius: 4px; height: 30px;" class="button_update"/>
+                                  </td>
+                                 
+                               <td align="right" >
+                               <a href="{{=URL(c='item',f='item_list_download')}}">
+                                      <input type="button" name="btn_download" id="btn_download" value="Download" style="border-radius: 4px; height: 30px;" class="button_update"/>
+                                     </a> 
+                               <a href="{{=URL(c='item',f='item_batch_upload')}}">
+                               <input type="button" name="" id="" value="Batch Upload" style="border-radius: 4px; height: 30px;" class="button_update"/>
+                               </a>
+                               </td>
+                             </tr>
+                            </form>
+                        </table>
+                        <strong>Total:</strong> {{=total_rec}}<br />
+                    
+                        <!--======END=========-->
+
+
+                        <!--=========SHOW TABLE========-->
+                        <table width="80%" border="1" cellpadding="1" cellspacing="1" class="sample_border" >
+                            <tr align="left" class="blackCatHead"  height="20px" ;"vertical-align:middle" style="background-color: rgb(200, 248, 231);">
+                              <td >Item</td>
+                             
+                              <td align="right" >Quantity</td>
+                              
+                              <td align="right">TP Amount</td>
+                              
+                              <td align="right">Vat Amount </td>
+                
+                              <td align="right"  ></td>
+                            </tr>
+                            {{for records_ov_dict in itemRows:
+                                id=str(records_ov_dict["id"])
+                                item_id=str(records_ov_dict["item_id"])
+                                name=str(records_ov_dict["name"])
+                                stock_quantity=str(records_ov_dict["stock_quantity"])
+                                tp=str(records_ov_dict["price"])
+                                vat=str(records_ov_dict["vat_amt"])
+                                                               
+                              }}
+
+                            <form id="form1" name="form1" method="post" action="">
+                                
+                                <tr  align="left" class="blackCat"  style=" font-size:13px"> 
+                               
+                                <td width="215" >{{=item_id}} | {{=name}}</td>
+                                
+                                <td  align="right" >{{=stock_quantity}}</td>
+                               
+                                <td align="right"  >{{=tp}}</td>
+                               
+                                <td  align="right"  >{{=vat}}</td>
+                            
+                                <form id="form1" name="form1" method="post" action="{{=URL(c='item',f='item_edit')}}" target="_blank">
+                                    <td width="50" align="right"> 
+                                    <a href="{{=URL(c='item',f='item_edit',args=[id])}}">
+                                        <input type="button" name="submit" id="submit" value="&gt;&gt;"   class="button_update"/>
+                                    </a>
+                                    </td>
+                                </form>
+                                </tr>
+                            </form>
+                            {{pass}}
+
+                            
+                        </table>
+
+                        {{if page:}}
+                        &nbsp;&nbsp;<a href="{{=URL(args=[page-page])}}">first</a> |
+                        &nbsp;&nbsp;<a href="{{=URL(args=[page-1])}}">previous</a> |
+                        {{pass}}
+                        
+                        {{if len(itemRows)>items_per_page:}}
+                        &nbsp;&nbsp;<a href="{{=URL(args=[page+1])}}">next</a>
+                        {{pass}}
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+                            
