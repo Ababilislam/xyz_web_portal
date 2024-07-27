@@ -99,6 +99,7 @@ def item():
 
 
 def item_edit():
+    response.title="Item Edit"
     if (session.cid=='' or session.cid==None):
         redirect (URL('default','index'))
     # return 'flhj'
