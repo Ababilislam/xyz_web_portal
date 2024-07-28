@@ -33,30 +33,38 @@ def user_order():
         condition = f"and created_by='{user_name}'"
     
     if btn_filter_item:
-        from_date = request.vars.from_date
-        to_date = request.vars.to_date
-        # return from_date, to_date
+        item_id_filter = item_id_filter.strip()
         # return item_id_filter
         
-        
-        condition = f" and order_date >='{from_date}' and order_date <='{to_date}'"
+        item_name = item_id_filter
+        # return item_name
+        condition = f" and  ='{item_name}'"
 
-        session.from_date = from_date
-        session.to_date = to_date
+        session.item_id_filter = item_id_filter
         session.condition=condition
     
     if btn_all:
         condition = ""
-        session.from_date = ""
-        session.to_date = ""
+        session.item_id_filter = ''
 
-    order_sl_sql = f"select * from sm_order_head where cid='{cid}' {condition} order by sl DESC limit %d, %d;" % limitby
+    order_sl_sql = f"select sl from sm_order_head where cid='{cid}' {condition} order by sl desc";
     # return order_sl_sql
-    itemRows = db.executesql(order_sl_sql, as_dict=True)
+    order_sl = db.executesql(order_sl_sql, as_dict=True)
+    sl_list = []
+    for i in order_sl:
+        sl_list.append(i['sl'])
     
+    sl_placeholders = ', '.join(map(str, sl_list))
     
+
+
+    itemRows_sql = "select * from sm_order where cid = '"+str(cid)+"'  and sl in ('" +sl_placeholders+"') ORDER BY id DESC limit %d, %d;" % limitby
+    # return itemRows_sql
+    itemRows = db.executesql(itemRows_sql, as_dict=True)
+  
+    # return 22
     
-    total_record_sql = f"select count(sl) as total from sm_order_head where cid='{cid}' {condition} ORDER BY sl ASC;"
+    total_record_sql = f"SELECT COUNT(id) AS total FROM sm_order WHERE cid='{cid}' and sl in ('" +sl_placeholders+"') ORDER BY id ASC;"
     # return total_record_sql
     total_record = db.executesql(total_record_sql, as_dict = True)
     total_rec = total_record[0]['total']
@@ -65,40 +73,6 @@ def user_order():
    
     return dict(itemRows=itemRows,page=page,items_per_page=items_per_page,total_rec=total_rec)
 
-
-def add_order_sl():
-    cid = session.cid
-    if (cid=='' or cid==None):
-        redirect (URL('default','index'))
-    
-    last_sl_query = f"SELECT `sl` FROM `sm_order_head` WHERE cid='{cid}' ORDER BY sl DESC;"
-    last_sl = db.executesql(last_sl_query,as_dict=True)
-
-    last_order_sl=last_sl[0]['sl']
-    order_sl = int(last_order_sl)+1
-    rep_name=session.name
-    order_date =str(date_fixed)[0:10]
-    # return order_date
-    order_date_time =str(date_fixed)
-    status ="Submitted"
-    create_on=str(date_fixed)
-    created_by = session.name
-    check_order_sql = f"select * from sm_order_head where cid='{cid}' and sl='{order_sl}' limit 1;"
-    # return check_order_sql
-    check_order = db.executesql(check_order_sql)
-    if not check_order:
-        insert_sql = f"INSERT INTO `sm_order_head`(`cid`, `sl`, `rep_name`, `order_date`, `order_datetime`,  `status`,  `created_on`, `created_by`) VALUES ('{cid}','{order_sl}','{rep_name}','{order_date}','{order_date_time}','{status}','{create_on}','{created_by}')"
-         # return insert_sql
-        db.executesql(insert_sql)
-        session.flash = "Order serial created"
-        redirect(URL('user_order'))
-    else:
-        response.flash = "order serial already exists"
-    
-
-
-def order_add():
-    pass
 
 
 def get_all_order_list():
@@ -131,8 +105,6 @@ def get_all_order_list():
             retStr += ',' + item_name
 
     return retStr
-
-
 
 
 
