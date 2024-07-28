@@ -7,10 +7,20 @@
 
     <title>{{=response.title}}</title>
 
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"/> -->
+    
+    <!-- <script src=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
+
+
+    
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.3/themes/base/jquery-ui.min.css" integrity="sha512-8PjjnSP8Bw/WNPxF6wkklW6qlQJdWJc/3w/ZQPvZ/1bjVDkrrSqLe9mfPYrMxtnzsXFPc434+u4FHLnLjXTSsg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
     
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
         
@@ -161,7 +171,7 @@
         }
 
         .dropdown:hover .dropbtn {
-            color: #54B450;
+            color: #54B450;}
 
         .fa-arrow-right-from-bracket {
             padding-left: 8px;
@@ -171,7 +181,7 @@
 
     <div class="row">
         <a style="text-decoration:none" href="{{=URL(c='default',f='home')}}">
-            <img class="img" src="{{=URL('static/images', 'logo.png')}}" alt="company logo/description">
+            <img class="img" src="{{=URL('static/images', 'logodfg.png')}}" alt="company logo/description">
         </a>
         <h1>XYZ</h1>
         <!-- <div>
@@ -214,9 +224,13 @@
                     </a>
                 </div>
                 <div class="button-container">
-                    <a style="text-decoration:none" href="{{=URL(c='',f='')}}">
-                        <button>Order item</button>   
-                    </a>
+                    <button id="showButtons1" onclick="toggleButtons('hiddenButtons1')">Report</button>
+                    <div id="hiddenButtons1" class="">
+                        <a style="text-decoration:none" href="{{=URL(c='order',f='Order')}}">
+                            <button>Order Item</button>   
+                        </a>
+                    </div>
+                    
                     <a style="text-decoration:none" href="{{=URL(c='',f='')}}">
                         <button>Admin User</button>
                     </a>
@@ -228,10 +242,10 @@
             {{elif session.user_type == 'User':}}
                 <div class="button-container">
                     <div style="width: auto; height: auto;">
-                        <a style="text-decoration:none" href="{{=URL(c='',f='')}}">
+                        <a style="text-decoration:none" href="{{=URL(c='user_item',f='user_item')}}">
                             <button>item</button>
                         </a>
-                        <a style="text-decoration:none" href="{{=URL(c='',f='')}}">
+                        <a style="text-decoration:none" href="{{=URL(c='order',f='user_order')}}">
                             <button>Order</button>
                         </a>
                         <a style="text-decoration:none" href="{{=URL(c='',f='')}}">
@@ -250,11 +264,14 @@
             {{include}}
         </div>
     </div>
+    
+    
+    {{block script}}
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    {{block script}}{{end}}
+    {{end}}
 </body>
 
 

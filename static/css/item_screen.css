@@ -1,0 +1,184 @@
+
+
+	:root {
+		--title-color: white;
+		--title-color1: #238b04;
+		--text_color: rgb(10, 10, 10);
+		--textWhitColor: rgb(248, 245, 245);
+		--font-family: 'Arial', sans-serif;
+	}
+
+	.item_add_row {
+		display: flex;
+		justify-content: space-evenly;
+		background-color:{{=session.button_color}};
+		padding: 20px;
+		border-radius: 8px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	}
+
+	.item_add_row div {
+		margin-right: 50px;
+	}
+
+	label {
+		margin-top: 10px;
+		color: {{=session.text_color}};
+	}
+
+	input {
+		width: 100%;
+		padding: 8px;
+		margin-top: 5px;
+		box-sizing: border-box;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+	}
+
+	button {
+		background-color:green;
+		color: #fff;
+		padding: 10px 15px;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 16px;
+	}
+
+	button:hover {
+		background-color: #45a049;
+		color: white;
+	}
+
+	.col1 {
+		display: block;
+	}
+
+	.sizebox {
+		height: 20px;
+	}
+
+	/********************************  All Itemes CSS *************************/
+
+	.all_level {
+		color: var(--textWhitColor);
+		border: 1px solid #ddd;
+		background-color: var(--title-color1);
+		text-align: center;
+
+	}
+
+	.all_level td {
+		border: 1px solid #111111;
+
+	}
+
+	.singelRow {
+
+		border: 1px solid #ddd;
+		background-color: white;
+		text-align: center;
+
+	}
+
+	.singelRow td {
+
+		border: 1px solid #111111;
+
+	}
+
+	/* Update background color for even indices */
+	.singelRow:nth-child(even) {
+		background-color: rgb(195, 202, 195);
+	}
+
+	/* Initially hide the popup */
+.popup-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #C3CAC3;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Styles for the popup content */
+.popup-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* Display the popup when it has the 'active' class */
+.popup-container.active {
+    display: flex;
+}
+
+
+
+	/**********************************Item Top Button****************************/
+	.button_row {
+
+		height: 50px;
+		display: flex;
+		justify-content: start ;
+
+	}
+
+	.dropdownButton {
+		height: 48px;
+		background: var(--title-color);
+		border-radius: 4px;
+		color: var(--text_color);
+	}
+
+	.Secarch_feild {
+		padding: 0px;
+		margin: 0px;
+		/*		background-color: var(--title-color);*/
+		color: var(--text_color);
+		padding: 7px 7px;
+		border: 2px solid green;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 12px;
+	}
+
+	.btn-open-popup {
+		background: {{=session.button_color}};
+		color:  {{=session.text_color}};
+		padding: 5px 10px;
+		border: 2px solid green;
+		border-radius: 4px;
+		cursor: pointer;
+		display: block;
+		height: 38px;
+		margin-top: 5px;
+		margin-left: 3px;
+	}
+
+	.button_img {
+		width: 25px;
+		height: 25px;
+	}
+
+	.action_button {
+		background: var(--title-color);
+		color: #131212;
+		padding: 5px 5px;
+		border: 2px solid green;
+		border-radius: 4px;
+
+		width: 50px;
+	}
+
+
+	.add_item_row {
+		display: flex;
+		justify-content: space-between;
+	}

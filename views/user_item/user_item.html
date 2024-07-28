@@ -1,0 +1,176 @@
+{{extend 'layout.html'}}
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+                            
+<script>
+    var base_url=location.protocol + "//" + location.hostname + (location.port && ":" + location.port) + "/{{=request.application}}/";
+    // console.log(base_url);
+    $(function () {
+
+        // alert(base_url + 'user_item/get_all_item_list')
+        $.ajax({
+            url: base_url + 'user_item/get_all_item_list',
+            success: function (resStr) {
+                valuelvlListStr_sm = resStr
+            }
+        });
+    
+        $('#item_id_filter').keyup(function () {
+            //-------------------------
+            var valueList = valuelvlListStr_sm.split(',');
+            var searchValue = $("#item_id_filter").val();
+
+            //---------------- auto complete combo list
+            var valueList_new = new Array();
+            lc = 0;
+            i = 0;
+            var valueStr = "";
+            while (i < valueList.length) {
+                valueStr = valueList[i];
+                i = i + 1;
+                var res = valueStr.toUpperCase().match(searchValue.toUpperCase());
+                if (res != null) {
+                    valueList_new[lc] = valueStr;
+                    lc = lc + 1;
+                    if (lc == 30) {
+                        break;
+                    };
+                } else {
+                    continue;
+                }
+            };
+            //alert (ref_list_new);
+            //-------------- auto complete source
+            $("input#item_id_filter").autocomplete({
+                source: valueList_new
+            });
+
+        });
+    });
+</script>
+<table width="100%"  border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
+  <tr height="30px" >
+    <td width="280px"><span class="blackCatTitle">Item
+      
+    </span></td>
+   
+    <td width="10px"></td>
+    <td align="right" width="20px">&nbsp;</td>
+  </tr>
+  <tr  height="1px" style="background-color:#CCCCCC;">
+	    <td ></td><td ></td>
+	    <td width="100" ></td>
+	    <td ></td>
+  </tr>
+</table>
+
+
+<table width="100%" height="500px"  border="0" cellspacing="0" cellpadding="0" class="page_color"  >
+    <tr height="100%"  style="vertical-align:top;">
+        <td>
+            <table width="100%"  border="0" cellpadding="0" cellspacing="0"  >
+                <tr>
+                    <td width="10">&nbsp;</td>
+                    <td valign="top">
+                        <br />
+
+          <!--=====INPUT VALUES===========-->
+                       
+
+                        <!--=======FILTER/ALL/DOWNLOAD/BATCHUP==========-->
+                        <table width="80%" cellpadding="1" cellspacing="1" class="sample_border" >
+		   
+                            <form id="form1" name="form1" method="post" action="{{=URL(c='user_item',f='user_item')}}" >
+                             <tr align="left" class="blackCatHead"  height="20px" ;"vertical-align:middle">
+
+            
+
+                               <td width="100" >
+                                {{if session.item_id_filter == '' or session.item_id_filter == 'None' or session.item_id_filter == None :}}
+                                   <input  name="item_id_filter" type="text" id="item_id_filter" size="25" value="" placeholder="Item ID/Name" autocomplete="off" style="width:300px"/>
+                                {{else:}}
+                                    <input  name="item_id_filter" type="text" id="item_id_filter" size="25" value="{{=session.item_id_filter}}" placeholder="Item ID/Name" autocomplete="off" style="width:300px"/>
+                               {{pass}}
+                               
+                               </td>
+                               <td width="100" >
+                                
+                                <input type="submit" name="btn_filter_item" id="btn_filter_item" value="Filter" style="border-radius: 4px; height: 30px;" class="button_update"/>
+                                <input type="submit" name="btn_all" id="btn_all" value="All" style="border-radius: 4px; height: 30px;" class="button_update"/>
+                                  </td>
+                                 
+                               <td align="right" >
+                               <a href="{{=URL(c='user_item',f='item_list_download')}}">
+                                      <input type="button" name="btn_download" id="btn_download" value="Download" style="border-radius: 4px; height: 30px;" class="button_update"/>
+                                     </a> 
+                               
+                               </td>
+                             </tr>
+                            </form>
+                        </table>
+                        <strong>Total:</strong> {{=total_rec}}<br />
+                        
+                        <!--======END=========-->
+
+
+                        <!--=========SHOW TABLE========-->
+                        <table width="80%" border="1" cellpadding="1" cellspacing="1" class="sample_border" >
+                            <tr align="left" class="blackCatHead"  height="20px" ;"vertical-align:middle" style="background-color: rgb(200, 248, 231);">
+                              <td >Item</td>
+                             
+                              <td align="right" >Quantity</td>
+                              
+                              <td align="right">TP Amount</td>
+                              
+                              <td align="right">Vat Amount </td>
+                            </tr>
+                            {{for records_ov_dict in itemRows:
+                                id=str(records_ov_dict["id"])
+                                item_id=str(records_ov_dict["item_id"])
+                                if item_id=="" or item_id==None or item_id=="None":
+                                 item_id=" "
+                                 pass
+                                name=str(records_ov_dict["name"])
+                                stock_quantity=str(records_ov_dict["stock_quantity"])
+                                tp=str(records_ov_dict["price"])
+                                if tp=="" or tp==None or tp=="None" or tp=="none":
+                                 tp="0"
+                                 pass
+                                vat=str(records_ov_dict["vat_amt"])
+                                                               
+                              }}
+
+                            <form id="form1" name="form1" method="post" action="">
+                                
+                                <tr  align="left" class="blackCat"  style=" font-size:13px"> 
+                               
+                                    <td width="250" >{{=item_id}} | {{=name}}</td>
+                                    
+                                    <td  align="right" >{{=stock_quantity}}</td>
+                                
+                                    <td align="right"  >{{=tp}}</td>
+                                
+                                    <td  align="right"  >{{=vat}}</td>
+                                </tr>
+                            </form>
+                            {{pass}}
+
+                            
+                        </table>
+
+                        {{if page:}}
+                        &nbsp;&nbsp;<a href="{{=URL(args=[page-page])}}">first</a> |
+                        &nbsp;&nbsp;<a href="{{=URL(args=[page-1])}}">previous</a> |
+                        {{pass}}
+                        
+                        {{if len(itemRows)>items_per_page:}}
+                        &nbsp;&nbsp;<a href="{{=URL(args=[page+1])}}">next</a>
+                        {{pass}}
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+                            
