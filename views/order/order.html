@@ -124,24 +124,17 @@
                             <tr align="left" class="blackCatHead"  height="20px" ;"vertical-align:middle" style="background-color: rgb(200, 248, 231);">
                               
                         
-                              <td align="left" >item Serial</td>
-                              <td align="left" >item Name</td>
-                              <td align="right" >Quantity</td>
-                              <td align="right">TP Amount</td>
-                              <td align="right">Vat Amount </td>
-                              <td align="left" >Order Date</td>
-                              <td align="left" >Delivery  Date</td>
-                              <td align="right" >Status</td>
+                                <td align="left" >Order Serial</td>
+                                <td align="left" >Order Date</td>
+                                <td align="left" >Delivery  Date</td>
+                                <td align="right" >Status</td>
+                                <td align="right" >Details</td>
                               
                               
                             </tr>
                             {{for records_ov_dict in itemRows:
                                 id=str(records_ov_dict["id"])
                                 item_sl=str(records_ov_dict["sl"])
-                                item_name=str(records_ov_dict["item_name"])
-                                quantity=str(records_ov_dict["quantity"])
-                                price=str(records_ov_dict["price"])
-                                vat=str(records_ov_dict["item_vat"])
                                 
                                 order_date=str(records_ov_dict["order_date"])
                                 delevery_date=str(records_ov_dict["delivery_date"])
@@ -154,15 +147,17 @@
                                
                                     <td width="250" >{{=item_sl}}</td>
                                     
-                                    <td  align="right" >{{=item_name}}</td>
-                                
-                                    <td align="right"  >{{=quantity}}</td>
-                                
-                                    <td  align="right"  >{{=price}}</td>
-                                    <td  align="right"  >{{=vat}}</td>
+                                    
                                     <td  align="right"  >{{=order_date}}</td>
                                     <td  align="right"  >{{=delevery_date}}</td>
                                     <td  align="right"  >{{=status}}</td>
+                                    <form id="form1" name="form1" method="post" action="" target="_blank">
+                                        <td width="50" align="center"> 
+                                        <a href="{{=URL(c='order',f='order_view_approve',args=[id,item_sl])}}">
+                                            <input type="button" name="submit" id="submit" value="Details"   class="button_update"/>
+                                        </a>
+                                        </td>
+                                    </form>
                                 </tr>
                             </form>
                             {{pass}}

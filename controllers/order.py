@@ -186,24 +186,13 @@ def Order():
         session.from_date = ""
         session.to_date = ""
 
-    order_sl_sql = f"select sl from sm_order_head where cid='{cid}' {condition} order by sl desc";
+    order_sl_sql = f"select * from sm_order_head where cid='{cid}' {condition} order by sl DESC limit %d, %d;" % limitby
     # return order_sl_sql
-    order_sl = db.executesql(order_sl_sql, as_dict=True)
-    sl_list = []
-    for i in order_sl:
-        sl_list.append(i['sl'])
+    itemRows = db.executesql(order_sl_sql, as_dict=True)
     
-    sl_placeholders = ', '.join(map(str, sl_list))
     
-
-
-    itemRows_sql = "select * from sm_order where cid = '"+str(cid)+"'  and sl in ('" +sl_placeholders+"') ORDER BY id DESC limit %d, %d;" % limitby
-    # return itemRows_sql
-    itemRows = db.executesql(itemRows_sql, as_dict=True)
-  
-    # return 22
     
-    total_record_sql = f"SELECT COUNT(id) AS total FROM sm_order WHERE cid='{cid}' and sl in ('" +sl_placeholders+"') ORDER BY id ASC;"
+    total_record_sql = f"select count(sl) as total from sm_order_head where cid='{cid}' {condition} ORDER BY sl DESC;"
     # return total_record_sql
     total_record = db.executesql(total_record_sql, as_dict = True)
     total_rec = total_record[0]['total']
