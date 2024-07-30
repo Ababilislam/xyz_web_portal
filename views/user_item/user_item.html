@@ -87,7 +87,7 @@
 
                                <td width="100" >
                                 {{if session.item_id_filter == '' or session.item_id_filter == 'None' or session.item_id_filter == None :}}
-                                   <input  name="item_id_filter" type="text" id="item_id_filter" size="25" value="" placeholder="Item ID/Name" autocomplete="off" style="width:300px"/>
+                                   <input  name="item_id_filter" type="text" id="item_id_filter" size="25" value="" placeholder="Item Name" autocomplete="off" style="width:300px"/>
                                 {{else:}}
                                     <input  name="item_id_filter" type="text" id="item_id_filter" size="25" value="{{=session.item_id_filter}}" placeholder="Item ID/Name" autocomplete="off" style="width:300px"/>
                                {{pass}}
@@ -123,13 +123,12 @@
                               <td align="right">TP Amount</td>
                               
                               <td align="right">Vat Amount </td>
+                              <td align="right">Total Amount </td>
                             </tr>
                             {{for records_ov_dict in itemRows:
                                 id=str(records_ov_dict["id"])
                                 item_id=str(records_ov_dict["item_id"])
-                                if item_id=="" or item_id==None or item_id=="None":
-                                 item_id=" "
-                                 pass
+                                
                                 name=str(records_ov_dict["name"])
                                 stock_quantity=str(records_ov_dict["stock_quantity"])
                                 tp=str(records_ov_dict["price"])
@@ -137,6 +136,7 @@
                                  tp="0"
                                  pass
                                 vat=str(records_ov_dict["vat_amt"])
+                                total_amnt = float((int(stock_quantity)*float(tp))+(int(stock_quantity)*float(vat)))
                                                                
                               }}
 
@@ -144,13 +144,14 @@
                                 
                                 <tr  align="left" class="blackCat"  style=" font-size:13px"> 
                                
-                                    <td width="250" >{{=item_id}} | {{=name}}</td>
+                                    <td width="250" >{{=name}}</td>
                                     
                                     <td  align="right" >{{=stock_quantity}}</td>
                                 
                                     <td align="right"  >{{=tp}}</td>
                                 
                                     <td  align="right"  >{{=vat}}</td>
+                                    <td  align="right"  >{{=total_amnt}}</td>
                                 </tr>
                             </form>
                             {{pass}}
@@ -163,7 +164,7 @@
                         &nbsp;&nbsp;<a href="{{=URL(args=[page-1])}}">previous</a> |
                         {{pass}}
                         
-                        {{if len(itemRows)>items_per_page:}}
+                        {{if total_rec>items_per_page:}}
                         &nbsp;&nbsp;<a href="{{=URL(args=[page+1])}}">next</a>
                         {{pass}}
                     </td>

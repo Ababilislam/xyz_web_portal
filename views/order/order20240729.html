@@ -1,0 +1,183 @@
+{{extend 'layout.html'}}
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+                            
+<script>
+    var base_url=location.protocol + "//" + location.hostname + (location.port && ":" + location.port) + "/{{=request.application}}/";
+    // console.log(base_url);
+    $(function () {
+
+        // alert(base_url + 'user_item/get_all_item_list')
+        $.ajax({
+            url: base_url + 'user_item/get_all_order_list',
+            success: function (resStr) {
+                valuelvlListStr_sm = resStr
+            }
+        });
+    
+        $('#item_id_filter').keyup(function () {
+            //-------------------------
+            var valueList = valuelvlListStr_sm.split(',');
+            var searchValue = $("#item_id_filter").val();
+
+            //---------------- auto complete combo list
+            var valueList_new = new Array();
+            lc = 0;
+            i = 0;
+            var valueStr = "";
+            while (i < valueList.length) {
+                valueStr = valueList[i];
+                i = i + 1;
+                var res = valueStr.toUpperCase().match(searchValue.toUpperCase());
+                if (res != null) {
+                    valueList_new[lc] = valueStr;
+                    lc = lc + 1;
+                    if (lc == 30) {
+                        break;
+                    };
+                } else {
+                    continue;
+                }
+            };
+            //alert (ref_list_new);
+            //-------------- auto complete source
+            $("input#item_id_filter").autocomplete({
+                source: valueList_new
+            });
+
+        });
+    });
+</script>
+<table width="100%"  border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
+  <tr height="30px" >
+    <td width="280px"><span class="blackCatTitle">Order
+      
+    </span></td>
+   
+    <td width="10px"></td>
+    <td align="right" width="20px">&nbsp;</td>
+  </tr>
+  <tr  height="1px" style="background-color:#CCCCCC;">
+	    <td ></td><td ></td>
+	    <td width="100" ></td>
+	    <td ></td>
+  </tr>
+</table>
+
+
+<table width="100%" height="500px"  border="0" cellspacing="0" cellpadding="0" class="page_color"  >
+    <tr height="100%"  style="vertical-align:top;">
+        <td>
+            <table width="100%"  border="0" cellpadding="0" cellspacing="0"  >
+                <tr>
+                    <td width="10">&nbsp;</td>
+                    <td valign="top">
+                        <br />
+
+          <!--=====INPUT VALUES===========-->
+                       
+
+                        <!--=======FILTER/ALL/DOWNLOAD/BATCHUP==========-->
+                        <table width="80%" cellpadding="1" cellspacing="1" class="sample_border" >
+		   
+                            <form id="form1" name="form1" method="post" action="{{=URL(c='',f='')}}" >
+                             <tr align="left" class="blackCatHead"  height="20px" ;"vertical-align:middle">
+
+                               <td width="100" >
+                                {{if session.from_date == '' or session.from_date == 'None' or session.from_date == None :}}
+                                   <input  name="from_date" type="date" id="from_date" placeholder="From Date" autocomplete="off" style="width:220px"/>
+                                {{else:}}
+                                    <input  name="from_date" type="date" id="from_date" size="25" value="{{=session.from_date}}" placeholder="From Date" autocomplete="off" style="width:220px"/>
+                               {{pass}}
+                               
+                               </td>
+                               <td width="100" >
+                                {{if session.to_date == '' or session.to_date == 'None' or session.to_date == None :}}
+                                   <input  name="to_date" type="date" id="to_date" placeholder="To Date" autocomplete="off" style="width:220px"/>
+                                {{else:}}
+                                    <input  name="to_date" type="date" id="to_date"  value="{{=session.to_date}}" placeholder="To Date" autocomplete="off" style="width:220px"/>
+                               {{pass}}
+                               
+                               </td>
+                               <td width="100" >
+                                
+                                <input type="submit" name="btn_filter_item" id="btn_filter_item" value="Filter" style="border-radius: 4px; height: 30px;" class="button_update"/>
+                                <input type="submit" name="btn_all" id="btn_all" value="All" style="border-radius: 4px; height: 30px;" class="button_update"/>
+                                  </td>
+                                 
+                               <td align="right" >
+                               <a href="{{=URL(c='order',f='download_order')}}">
+                                      <input type="button" name="btn_download" id="btn_download" value="Download" style="border-radius: 4px; height: 30px;" class="button_update"/>
+                                     </a> 
+                               
+                               </td>
+                             </tr>
+                            </form>
+                        </table>
+                        <strong>Total:</strong> {{=total_rec}}<br />
+                        
+                        <!--======END=========-->
+
+
+                        <!--=========SHOW TABLE========-->
+                        <table width="80%" border="1" cellpadding="1" cellspacing="1" class="sample_border" >
+                            <tr align="left" class="blackCatHead"  height="20px" ;"vertical-align:middle" style="background-color: rgb(200, 248, 231);">
+                              
+                        
+                                <td align="left" >Order Serial</td>
+                                <td align="left" >Order Date</td>
+                                <td align="left" >Delivery  Date</td>
+                                <td align="right" >Status</td>
+                                <td align="right" >Details</td>
+                              
+                              
+                            </tr>
+                            {{for records_ov_dict in itemRows:
+                                id=str(records_ov_dict["id"])
+                                item_sl=str(records_ov_dict["sl"])
+                                
+                                order_date=str(records_ov_dict["order_date"])
+                                delevery_date=str(records_ov_dict["delivery_date"])
+                                status=str(records_ov_dict["status"])              
+                              }}
+
+                            <form id="form1" name="form1" method="post" action="">
+                                
+                                <tr  align="left" class="blackCat"  style=" font-size:13px"> 
+                               
+                                    <td width="250" >{{=item_sl}}</td>
+                                    
+                                    
+                                    <td  align="right"  >{{=order_date}}</td>
+                                    <td  align="right"  >{{=delevery_date}}</td>
+                                    <td  align="right"  >{{=status}}</td>
+                                    <form id="form1" name="form1" method="post" action="" target="_blank">
+                                        <td width="50" align="center"> 
+                                        <a href="{{=URL(c='order',f='order_view_approve',args=[id,item_sl])}}">
+                                            <input type="button" name="submit" id="submit" value="Details"   class="button_update"/>
+                                        </a>
+                                        </td>
+                                    </form>
+                                </tr>
+                            </form>
+                            {{pass}}
+
+                            
+                        </table>
+
+                        {{if page:}}
+                        &nbsp;&nbsp;<a href="{{=URL(args=[page-page])}}">first</a> |
+                        &nbsp;&nbsp;<a href="{{=URL(args=[page-1])}}">previous</a> |
+                        {{pass}}
+                        
+                        {{if len(itemRows)>items_per_page:}}
+                        &nbsp;&nbsp;<a href="{{=URL(args=[page+1])}}">next</a>
+                        {{pass}}
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+                            

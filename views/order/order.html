@@ -80,36 +80,46 @@
                         <!--=======FILTER/ALL/DOWNLOAD/BATCHUP==========-->
                         <table width="80%" cellpadding="1" cellspacing="1" class="sample_border" >
 		   
-                            <form id="form1" name="form1" method="post" action="{{=URL(c='',f='')}}" >
+                            <form id="form1" name="form1" method="post" action="{{=URL(c='order',f='order')}}" >
                              <tr align="left" class="blackCatHead"  height="20px" ;"vertical-align:middle">
 
-                               <td width="100" >
-                                {{if session.from_date == '' or session.from_date == 'None' or session.from_date == None :}}
-                                   <input  name="from_date" type="date" id="from_date" placeholder="From Date" autocomplete="off" style="width:220px"/>
-                                {{else:}}
-                                    <input  name="from_date" type="date" id="from_date" size="25" value="{{=session.from_date}}" placeholder="From Date" autocomplete="off" style="width:220px"/>
-                               {{pass}}
-                               
-                               </td>
-                               <td width="100" >
-                                {{if session.to_date == '' or session.to_date == 'None' or session.to_date == None :}}
-                                   <input  name="to_date" type="date" id="to_date" placeholder="To Date" autocomplete="off" style="width:220px"/>
-                                {{else:}}
-                                    <input  name="to_date" type="date" id="to_date"  value="{{=session.to_date}}" placeholder="To Date" autocomplete="off" style="width:220px"/>
-                               {{pass}}
-                               
-                               </td>
+                                <td width="100" >
+                                    {{if session.order_date == '' or session.order_date == 'None' or session.order_date == None :}}
+                                    <input name="order_date" type="date" id="order_date" autocomplete="off" placeholder="Order Date" style="width:220px;">
+
+                                    {{else:}}
+                                        <input  name="order_date" type="date" id="order_date" size="25" value="{{=session.order_date}}" placeholder="Order Date" autocomplete="off" style="width:220px"/>
+                                   {{pass}}
+                                   
+                                   </td>
+                                   <td width="100" >
+                                    {{if session.mobile == '' or session.mobile == 'None' or session.mobile == None :}}
+                                    <input  name="mobile" type="text" id="moblie" placeholder="Mobile No" autocomplete="off" style="width:150px"/>
+
+                                    {{else:}}
+                                    <input  name="mobile" type="text" id="moblie" value="{{=session.mobile}}" autocomplete="off" style="width:150px"/>
+                                   {{pass}}
+                                       
+                                   </td>
                                <td width="100" >
                                 
-                                <input type="submit" name="btn_filter_item" id="btn_filter_item" value="Filter" style="border-radius: 4px; height: 30px;" class="button_update"/>
+                                <input type="submit" name="btn_filter_order" id="btn_filter_order" value="Filter" style="border-radius: 4px; height: 30px;" class="button_update"/>
                                 <input type="submit" name="btn_all" id="btn_all" value="All" style="border-radius: 4px; height: 30px;" class="button_update"/>
                                   </td>
                                  
-                               <td align="right" >
-                               <a href="{{=URL(c='order',f='download_order')}}">
-                                      <input type="button" name="btn_download" id="btn_download" value="Download" style="border-radius: 4px; height: 30px;" class="button_update"/>
+                                {{if session.user_type == "Admin" or session.user_type == "ADMIN" or session.user_type == "ADMIN":}}
+                               <!-- <td align="right" hidden > -->
+                               <td align="right"  >
+                               <a href="{{=URL(c='web_order',f='new_web_order_entry',vars=dict(req_sl=last_order_sl))}}">
+                                      <input type="button" name="btn_download" id="btn_download" value="+ New Order" style="border-radius: 4px; height: 30px;" class="button_update"/>
                                      </a> 
-                               
+                               {{pass}}
+                                {{if session.user_type == "User" or session.user_type == "USER" or session.user_type == "user":}}
+                               <td align="right" >
+                               <a href="{{=URL(c='web_order',f='new_web_order_entry',vars=dict(req_sl=last_order_sl))}}">
+                                      <input type="button" name="btn_download" id="btn_download" value="+ New Order" style="border-radius: 4px; height: 30px;" class="button_update"/>
+                                     </a> 
+                               {{pass}}
                                </td>
                              </tr>
                             </form>
@@ -122,44 +132,52 @@
                         <!--=========SHOW TABLE========-->
                         <table width="80%" border="1" cellpadding="1" cellspacing="1" class="sample_border" >
                             <tr align="left" class="blackCatHead"  height="20px" ;"vertical-align:middle" style="background-color: rgb(200, 248, 231);">
-                              
-                        
-                                <td align="left" >Order Serial</td>
-                                <td align="left" >Order Date</td>
-                                <td align="left" >Delivery  Date</td>
-                                <td align="right" >Status</td>
-                                <td align="right" >Details</td>
-                              
+                          
+                            <td width="50" >VSL</td>
+                            <td width="60" >B.O.SL</td>
+                            <td  >Name</td>
+                            <td width="110"  >Mobile</td>
+                            <td width="120"  >Address</td>
+                            <td width="120"  >Status</td>
+                            
+                            <td width="50"  >&nbsp;</td>
                               
                             </tr>
-                            {{for records_ov_dict in itemRows:
-                                id=str(records_ov_dict["id"])
-                                item_sl=str(records_ov_dict["sl"])
-                                
-                                order_date=str(records_ov_dict["order_date"])
-                                delevery_date=str(records_ov_dict["delivery_date"])
-                                status=str(records_ov_dict["status"])              
-                              }}
-
-                            <form id="form1" name="form1" method="post" action="">
+                            {{if len(itemRows)>0:}}
+                                {{for records_ov_dict in itemRows:
+                                    id=str(records_ov_dict["id"])
+                                    item_sl=str(records_ov_dict["sl"])
+                                    client_name=str(records_ov_dict["client_name"])
+                                    area_name=str(records_ov_dict["area_name"])
+                                    mobile_no=str(records_ov_dict["mobile_no"])
+                                    status=str(records_ov_dict["status"])              
+                                }}
                                 
                                 <tr  align="left" class="blackCat"  style=" font-size:13px"> 
-                               
-                                    <td width="250" >{{=item_sl}}</td>
                                     
+
+                                    <td width="50" >{{=id}}</td>
                                     
-                                    <td  align="right"  >{{=order_date}}</td>
-                                    <td  align="right"  >{{=delevery_date}}</td>
-                                    <td  align="right"  >{{=status}}</td>
-                                    <form id="form1" name="form1" method="post" action="" target="_blank">
-                                        <td width="50" align="center"> 
-                                        <a href="{{=URL(c='order',f='order_view_approve',args=[id,item_sl])}}">
-                                            <input type="button" name="submit" id="submit" value="Details"   class="button_update"/>
-                                        </a>
-                                        </td>
-                                    </form>
+                                    <td width="60" style="background-color:#F4F5C5">{{=item_sl}}</td>
+                                    
+                                    <td  align="left"  >{{=client_name}}</td>
+                                    
+                                    <td width="110" >{{=mobile_no}}</td>
+                                    <!-- address -->
+                                    <td width="110" >{{=area_name}}</td>     
+                                    
+
+                                    <td width="70" align="center"  >{{=status}}</td>
+                                    
+                                  
+                                    <td width="50" align="right">
+                                        <a href="{{=URL(c='order',f='order_details',vars=dict(req_sl=item_sl),args=[page])}}">
+                                                <input type="button" name="btn_detail" id="btn_detail" value="Order &gt;"  class="button_update"/>
+                                        </a>                        
+                                    </td>
+                                
                                 </tr>
-                            </form>
+                                {{pass}}
                             {{pass}}
 
                             

@@ -41,11 +41,11 @@
                                             </tr>
                                             <tr>
                                                 <td width="140"> TP Amount </td>
-                                                <td><input style= "width: 260px;"type="number" name="tp_amount" required ></td>
+                                                <td><input style= "width: 260px;"type="text" pattern="^-?\d*(\.\d+)?$" name="tp_amount" required oninput="this.setCustomValidity(''); if (!this.checkValidity()) this.setCustomValidity('Please enter a valid amount, e.g., 0.5 or 2.5');" ></td>
                                             </tr>
                                             <tr>
                                                 <td width="140"> Vat Amount </td>
-                                                <td><input style= "width: 260px;"type="number" name="vat_amount" required></td>
+                                                <td><input style= "width: 260px;" type="text" pattern="^-?\d*(\.\d+)?$" name="vat_amount" required  oninput="this.setCustomValidity(''); if (!this.checkValidity()) this.setCustomValidity('Please enter a valid amount, e.g., 0.5 or 2.5');"></td>
                                             </tr>
                                             
                                             
@@ -117,7 +117,7 @@
                               <td align="right">TP Amount</td>
                               
                               <td align="right">Vat Amount </td>
-                
+                              <td align="right">Total Amount </td>
                               <td align="right"  ></td>
                             </tr>
                             {{for records_ov_dict in itemRows:
@@ -133,20 +133,22 @@
                                  tp="0"
                                  pass
                                 vat=str(records_ov_dict["vat_amt"])
-                                                               
+                                total_amnt = float((int(stock_quantity)*float(tp))+(int(stock_quantity)*float(vat)))
+      
                               }}
 
                             <form id="form1" name="form1" method="post" action="">
                                 
                                 <tr  align="left" class="blackCat"  style=" font-size:13px"> 
                                
-                                <td width="215" >{{=item_id}} | {{=name}}</td>
+                                <td width="215" >{{=name}}</td>
                                 
                                 <td  align="right" >{{=stock_quantity}}</td>
                                
                                 <td align="right"  >{{=tp}}</td>
                                
                                 <td  align="right"  >{{=vat}}</td>
+                                <td  align="right"  >{{=total_amnt}}</td>
                             
                                 <form id="form1" name="form1" method="post" action="{{=URL(c='item',f='item_edit')}}" target="_blank">
                                     <td width="50" align="right"> 
@@ -167,8 +169,8 @@
                        &nbsp;&nbsp;<a href="{{=URL(args=[page-page])}}">first</a> |
                        &nbsp;&nbsp;<a href="{{=URL(args=[page-1])}}">previous</a> |
                        {{pass}}
-                       
-                       {{if len(itemRows)>items_per_page:}}
+                       <!-- {{#=len(itemRows)}} -->
+                       {{if total_rec>items_per_page:}}
                        &nbsp;&nbsp;<a href="{{=URL(args=[page+1])}}">next</a>
                        {{pass}}
                        <!-- end pageination -->

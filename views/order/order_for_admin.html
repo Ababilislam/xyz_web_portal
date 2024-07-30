@@ -1,0 +1,798 @@
+<!--start-->
+
+{{extend 'layout.html'}}
+
+
+
+<link rel="stylesheet" href="{{=URL('static', 'js_and_css/ui.theme.css')}}" type="text/css" />
+
+<link rel="stylesheet" href="{{=URL('static', 'js_and_css/jquery-ui.css')}}" type="text/css" />
+
+<link rel="stylesheet" href="{{=URL('static', 'js_and_css/style.css')}}" type="text/css" />
+
+<script src="{{=URL('static','js_and_css/jquery-1.8.2.js')}}"></script>
+
+<script src="{{=URL('static','js_and_css/jquery-ui.js')}}"></script>
+
+  
+
+<style type="text/css">
+
+
+
+ input[type=text], input[type=password],  select {
+
+    margin: 2px 0px 2px 0px;
+
+	width:100px;
+
+}
+
+
+
+div.error {
+
+    padding: 0px;
+
+	width:inherit;
+
+	margin-left:0px;
+
+}
+
+
+
+.page_color,body{
+
+	font-family:Arial, Helvetica, sans-serif;
+
+	font-size:13px;	
+
+	}
+
+
+
+ </style>
+
+ 
+
+ 
+
+ <script>
+
+var base_url=location.protocol + "//" + location.hostname + (location.port && ":" + location.port) + "/{{=request.application}}/";
+
+
+
+$(function() {
+
+		$('#sm_search_date_to_dt').attr('placeholder','Order Date');
+		$('#sm_search_date_from_dt').attr('placeholder','Delivery Date');
+		
+	 	var valueListStr="";		
+
+		$('#depot_id_value').keyup(function(){
+
+			$.ajax({
+
+				  url: base_url+'default/get_depot_list',
+
+				  success: function(resStr) {
+
+					  valueListStr=resStr
+
+				  }
+
+				});
+
+			
+
+			//-------------------------
+
+			var valueList = valueListStr.split(',');				
+
+			var searchValue=$("#depot_id_value").val();
+
+			
+
+			//---------------- auto complete combo list
+
+			var valueList_new=new Array();
+
+			lc=0;
+
+			i =0;
+
+			var valueStr="";				
+
+			while (i < valueList.length)
+
+			{
+
+				valueStr=valueList[i];
+
+				i=i+1;					
+
+				var res=valueStr.toUpperCase().match(searchValue.toUpperCase());
+
+				if (res!=null){
+
+					valueList_new[lc]=valueStr;
+
+					lc=lc+1;
+
+					if (lc==30){
+
+						break;
+
+					};
+
+				}else{
+
+					continue;
+
+				}					
+
+			};
+
+			//alert (ref_list_new);
+
+			
+
+			//-------------- auto complete source
+
+			$( "input#depot_id_value" ).autocomplete({
+
+				source: valueList_new
+
+			});
+
+		
+
+	  }); 
+
+	   
+
+	   //==============	 
+
+	   var valueListStr2="";
+
+		
+
+		$('#search_type').blur(function(){
+
+			var depotValue=$("#depot_id_value").val();
+
+			
+
+			if ($('#search_type').val()=='REPID'){
+
+				//alert(base_url+'default/get_route_list');
+
+				$.ajax({
+
+					  url: base_url+'default/get_all_ff_list?depot='+depotValue,
+
+					  success: function(resStr) {
+
+						  valueListStr2=resStr
+
+					  }
+
+					});
+
+			}else if ($('#search_type').val()=='CLIENTID'){
+
+				$.ajax({
+
+					  url: base_url+'default/get_all_client_list?depot='+depotValue,
+
+					  success: function(resStr) {
+
+						  valueListStr2=resStr
+
+					  }
+
+					});			
+
+			}else if ($('#search_type').val()=='Status'){
+				valueListStr2="Submitted,Invoiced"			
+				
+			}else if ($('#search_type').val()=='MarketID'){
+
+				$.ajax({
+
+					  url: base_url+'default/get_area_list?depot='+depotValue,
+
+					  success: function(resStr) {
+
+						  valueListStr2=resStr
+
+					  }
+
+					});			
+
+			};
+
+			
+
+	 	});
+
+	 
+
+		$('#search_value').keyup(function(){
+
+			//-------------------------
+
+			var valueList = valueListStr2.split(',');				
+
+			var searchValue=$("#search_value").val();
+
+			
+
+			//---------------- auto complete combo list
+
+			var valueList_new=new Array();
+
+			lc=0;
+
+			i =0;
+
+			var valueStr="";				
+
+			while (i < valueList.length)
+
+			{
+
+				valueStr=valueList[i];
+
+				i=i+1;					
+
+				var res=valueStr.toUpperCase().match(searchValue.toUpperCase());
+
+				if (res!=null){
+
+					valueList_new[lc]=valueStr;
+
+					lc=lc+1;
+
+					if (lc==30){
+
+						break;
+
+					};
+
+				}else{
+
+					continue;
+
+				}					
+
+			};
+
+			//alert (ref_list_new);
+
+			
+
+			//-------------- auto complete source
+
+			$( "input#search_value" ).autocomplete({
+
+				source: valueList_new
+
+			});
+
+		
+
+	  }); 
+
+	   //==============	  	   
+
+	   	   
+
+}); 
+
+</script>
+
+ 
+
+
+
+<table width="100%"  border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
+
+  <tr height="30px" >
+
+    <td width="500"><span class="blackCatTitle">Order/Visit List</span></td>
+
+    
+
+	<form action="{{=URL(c='web_order',f='new_web_order_entry')}}" method="post" target="_blank">
+
+	<td width="515" align="right">
+		<input style="background-color: #6BCA9A; color: #F4F5C5; width: 100px; height: 30px;" name="new_order_btn" type="submit"  value="New Order"/>
+	</td>
+
+	</form>
+
+	
+
+    <td>&nbsp;</td>
+
+  </tr>
+
+  <tr  height="1px" style="background-color:#CCCCCC;">
+
+	    <td colspan="3" ></td>
+
+  </tr>
+
+</table>
+
+  
+
+  <table width="100%" height="500px"  border="0" cellspacing="0" cellpadding="0" class="page_color"  >
+
+  <tr height="100%"  style="vertical-align:top;">
+
+    <td width="10">&nbsp;</td>
+
+    <td>
+
+		<table width="100%"  border="0" cellpadding="0" cellspacing="0"  >
+
+		  <tr>
+
+			<td align="left">
+
+            <table width="1000" border="0" cellpadding="0" cellspacing="0" >
+
+            <form id="form1" name="form1" method="post" action="{{=URL(c='order_invoice',f='order_add',vars=dict(req_sl=0))}}" target="_blank">
+
+          <tr  align="left" class="blackCat"  style="vertical-align:middle">
+
+            <td width="807" align="left" >      
+
+            <td width="93" align="right"  >&nbsp;</td>
+
+          </tr>
+
+            </form>
+
+	 
+
+	  </table>
+
+      
+
+      </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+
+          <table width="720" height="78" border="0" cellpadding="0" cellspacing="0">            
+
+            <tr>
+
+              <td width="100%" colspan="2">
+				
+              	<table width="1000" border="1" cellpadding="1" cellspacing="1" class="sample_border" >
+
+			   		<form id="form1" name="form1" method="post" action="{{=URL(c='order_invoice',f='order')}}">
+
+					  <tr align="left" class="blackCatHead" height="20px" ;"vertical-align:middle">
+
+						<td width="100" >
+						
+						{{if session.user_type!='Depot':}}
+                             {{if session.depot_id_value_order=='' or session.depot_id_value_order==None:}}
+
+                                <input  name="depot_id_value" type="text" id="depot_id_value" style="width:150px" value="" placeholder="Select Branch" autocomplete="off"/>
+    
+                              {{else:}}
+    
+                                <input  name="depot_id_value" type="text" id="depot_id_value" style="width:150px" value="{{=session.depot_id_value_order}}" placeholder="Select Branch" autocomplete="off"/>
+    
+                              {{pass}}
+    
+                          {{else:}}
+    
+                            <input  name="" type="text" id="" style="width:150px; background-color:#F8F8F8" value="{{=session.depot_id}}|{{=session.user_depot_name}}" disabled="disabled" />
+    
+                          {{pass}}
+                      	
+					    </td>
+
+						<td width="100">{{=search_form.custom.widget.to_dt}}</td>
+
+						<td width="100">
+
+						  <select name="search_type" id="search_type" style="width:200px" >
+                            <option value="" selected="selected">Select a Type</option>
+                              {{if session.search_type_order=='VSL':}}<option value="VSL" selected="selected">VSL</option>{{else:}}<option value="VSL" >VSL</option>{{pass}}
+							  {{if session.search_type_order=='OrderSL':}}<option value="OrderSL" selected="selected">OrderSL</option>{{else:}}<option value="OrderSL" >OrderSL</option>{{pass}}
+							  {{if session.search_type_order=='CLIENTID':}}<option value="CLIENTID" selected="selected">Client/Retailer ID/Name</option>{{else:}}<option value="CLIENTID" title="autocomplete yes">Client/Retailer ID/Name</option>{{pass}}
+							  {{if session.search_type_order=='REPID':}}<option value="REPID" selected="selected">Rep/Sup ID/Name</option>{{else:}}<option value="REPID" title="autocomplete yes">Rep/Sup ID/Name</option>{{pass}}
+							  {{if session.search_type_order=='MarketID':}}<option value="MarketID" selected="selected">Territory</option>{{else:}}<option value="MarketID" title="autocomplete yes">Territory</option>{{pass}}
+							  {{if session.search_type_order=='Status':}}<option value="Status" selected="selected">Status</option>{{else:}}<option value="Status" title="autocomplete yes">Status</option>{{pass}}
+                                
+                              <!--{{if session.search_type_order=='DATE':}}<option value="DATE" selected="selected">DATE</option>{{else:}}<option value="DATE" >DATE</option>{{pass}}
+
+                              {{if session.search_type_order=='DownloadStatus':}}<option value="DownloadStatus" selected="selected">Download Status</option>{{else:}}<option value="DownloadStatus" >Download Status</option>{{pass}}-->
+
+                          </select>
+
+                         
+
+                        </td>
+
+						<td width="220" colspan="2"  >
+
+                        {{if session.search_value_order=='' or session.search_value_order==None:}}
+
+                            <input  name="search_value" type="text" id="search_value" size="25" value="" placeholder="Select value" autocomplete="off" style="width:300px"/>
+
+                        {{else:}}
+
+                            <input  name="search_value" type="text" id="search_value" size="25" value="{{=session.search_value_order}}" placeholder="Select value" autocomplete="off" style="width:300px"/>
+
+                        {{pass}}
+
+                        
+
+                        </td>
+
+						<td align="right" >&nbsp;</td>
+
+						<td width="50" align="center" style=" color: #752109;">
+						{{if session.user_type == 'Depot':}}
+							<a href="https://w05.yeapps.com/ipi/update_ho_status_depot/utility_settings" target="_blank" >MissingOrderDownload</a>
+						{{pass}}
+						</td>
+
+						<td width="50" align="center" >{{if (session.user_type=='Depot'):}}<a href="{{=URL(c='order_invoice',f='download_order_head')}}"/><input type="button" name="btn_download_list" id="btn_download_list" value="Download List"  class="button_update" title="Filter by Order Date/Delivery Date and Optionally Visit Type"/></a>{{pass}}</td>
+
+					  </tr>
+					  <tr align="left" class="blackCatHead" height="20px" ;"vertical-align:middle">
+					    <td >Delivery Date</td>
+					    <td>{{=search_form.custom.widget.from_dt}}</td>
+					    <td>Visit Type
+                        <select name="visit_type" id="visit_type" style="width:100px" >
+                            <option value="" selected="selected">ALL</option>
+                              {{if session.visit_type=='ORDER':}}<option value="ORDER" selected="selected">ORDER</option>{{else:}}<option value="ORDER" >ORDER</option>{{pass}}
+							  {{if session.visit_type=='VISIT':}}<option value="VISIT" selected="selected">VISIT</option>{{else:}}<option value="VISIT" >VISIT</option>{{pass}}
+						</select>
+                        
+                        </td>
+					    <td  >In Process
+                          <select name="in_process" id="in_process" style="width:100px" >
+                            <option value="" selected="selected">ALL</option>
+                            
+                              {{if session.in_process=='YES':}}
+                            <option value="YES" selected="selected">YES</option>
+                            {{else:}}
+                            <option value="YES" >YES</option>
+                            {{pass}}
+							  {{if session.in_process=='NO':}}
+                            <option value="NO" selected="selected">NO</option>
+                            {{else:}}
+                            <option value="NO" >NO</option>
+                            {{pass}}
+						
+                        </select>
+                        
+                        &nbsp;&nbsp;</td>
+					    <td  >
+                        
+                        {{if session.pendingFlag=='YES':}}
+                        	<input type="checkbox" name="pendingFlag" id="pendingFlag" checked="checked" value="YES" title="SearchType=Submitted,VisitType=ORDER,InProcess=NO" /> Pending
+                         {{else:}}
+                         	<input type="checkbox" name="pendingFlag" id="pendingFlag" value="YES" title="SearchType=Submitted,VisitType=ORDER,InProcess=NO" /> Pending
+                         {{pass}}                         
+</td>
+					    <td align="right" ><input type="submit" name="btn_filter" id="btn_filter" value="Filter"  class="button_update" title=""/></td>
+					    <td align="center" ><input type="submit" name="btn_all" id="btn_all" value="All"  class="button_update"/></td>
+					    <td align="center" ><a href="{{=URL(c='order_invoice',f='download_order')}}"/><input type="button" name="btn_download" id="btn_download" value="Download"  class="button_update" title="Filter by Order Date Required"/></a></td>
+				      </tr>
+
+				    </form>
+
+			  </table>
+
+				  <strong>Total:</strong> {{=totalCount}}<br />
+
+			  <table width="1000" border="1" cellpadding="1" cellspacing="1" class="sample_border" >
+
+                  <tr align="left" class="blackCatHead"  height="20px" ;"vertical-align:middle">
+                    <td width="50" >&nbsp;</td>
+
+                    <td width="50" >VSL</td>
+
+                    <td width="80" >Branch</td>
+
+                    <td width="60" >B.O.SL</td>
+
+                    <td  >Client/Retailer</td>
+
+                    <td width="120"  >{{=session.level3Name}}</td>
+
+                    <td width="120"  >Rep/Sup</td>
+
+                    <td width="110"  >Mobile</td>
+
+                    <td width="90"  >Order/Visit Date</td>
+                    <td width="70" align="center"  >DeliveryDate</td>
+
+                    <td width="70" align="center"  >Status,<br />
+
+                      VisitType</td>
+                    <td width="50" align="center"  >Inv. SL</td>
+
+                    <td width="50" align="center"  >In Process</td>
+
+                    <td width="50" align="left"  >Note</td>
+
+                    <td width="30"  >GeoInfo</td>
+
+                    <td width="50"  >&nbsp;</td>
+
+                    <!--<td width="30"  >&nbsp;</td>-->
+
+                  </tr>
+
+				  
+
+				  {{#preSl=0}}
+
+				  {{#newsl=0}}
+
+				  {{#j=0}}
+
+ 		  
+				<form name="headForm" id="headForm" method="post" action="{{=URL(c='order_invoice',f='order')}}">
+					<input type="hidden" name="vslList" id="vslfield" value="-1">
+                     
+			   {{for i,record in enumerate(records):}}
+
+			   	{{if i==items_per_page: break}}
+
+					<tr  align="left" class="blackCat"  style="vertical-align:middle; font-size:11px;">
+					  <td width="50" >{{ if record.field1=='ORDER' and record.field2==0 and record.status=='Submitted':}}<input type="checkbox" name="vslList" id="vslfield_{{=i}}" value="{{=record.id}}">{{pass}}</td>
+					  
+					  <td width="50" >{{=record.id}}</td> 
+
+					  <td width="80" >{{=record.depot_id}}<br />
+
+				      <font size="1">{{=record.depot_name}}</font></td>
+
+					  <td width="60" style="background-color:#F4F5C5">{{=record.sl}}</td>
+
+					  <td >{{=record.client_id}}<br />
+
+				      <font size="1">{{=record.client_name}}</font></td>
+
+					  <td width="120" >{{=record.area_id}}<br />
+
+                      <font size="1">{{=record.area_name}}</font></td>
+
+					  <td width="120" >{{=record.rep_id}}<br />
+
+				      <font size="1">{{=record.rep_name}}</font></td>
+
+					  <td width="110" >{{=record.mobile_no}}</td>
+
+					  <td width="90" >{{=record.order_datetime.strftime('%d-%m-%Y %I:%M%p')}}</td>
+					  <td width="70" align="center"  >{{=record.delivery_date.strftime('%d-%m-%Y')}}</td>
+
+					  <td width="70" align="center"  >{{=record.status}},<br />
+
+				      {{=record.visit_type}}</td>
+					  <td width="50" align="center"  >{{=record.invoice_ref}}</td>
+
+					  <td width="50" align="center"  >{{ if record.field1=='ORDER':}}{{=record.field2}}{{pass}}</td>
+
+					  <td width="50" align="left"  >{{=record.note}}</td>
+						
+                      <td width="30" align="right"  >
+                      {{if ((str(record.lat_long)!='0') & (str(record.lat_long)!='0,')):}}
+                      <a href="{{='https://maps.google.com/?q='+str(record.lat_long)}}" target="_blank">Location</a></td>
+					  {{pass}}
+                      
+					  <td width="50" align="right">
+                      {{#ordRow=db((db.sm_order.cid==session.cid)&(db.sm_order.vsl==record.id)).select(db.sm_order.vsl,limitby=(0,1))}}
+						
+                      {{#if ordRow:}}
+                      
+                      {{ if record.field1=='ORDER':}}
+						<a href="{{=URL(c='order_invoice',f='order_add',vars=dict(req_sl=record.sl,dptid=record.depot_id),args=[page])}}">
+                      		<input type="button" name="btn_detail" id="btn_detail" value="Order &gt;"  class="button_update"/>
+						</a>                        
+                      {{pass}} 
+                      </td>
+					  
+					</tr>
+					
+					
+					{{pass}}
+                    
+                 <tr  align="left" class="blackCat"  style="vertical-align:middle; font-size:13px;">
+					  <td colspan="16" >
+					    {{if page:}}
+					    &nbsp;&nbsp;<a href="{{=URL(args=[page-page])}}">first</a> |
+					    &nbsp;&nbsp;<a href="{{=URL(args=[page-1])}}">previous</a> |
+					    {{pass}}
+					    
+					    {{if len(records)>items_per_page:}}
+					    &nbsp;&nbsp;<a href="{{=URL(args=[page+1])}}">next</a>
+					    {{pass}}
+					    
+					    </td>
+					  </tr>                    
+				<tr  align="left" class="blackCat"  style="vertical-align:middle; font-size:13px;">
+					  <td colspan="5" >
+					    <img src="{{=URL('static','images/arrow_ltr.png')}}" width="38" height="22" alt="^" />
+					    <a href="" onClick="if (markAllRows()) return false;">Check All</a>&nbsp;/&nbsp;
+					    <a href="" onClick="if (unMarkAllRows()) return false;">Uncheck All</a>&nbsp;&nbsp;&nbsp;
+					    </td>
+					  <td colspan="11" rowspan="2" >&nbsp;</td>
+					  </tr>
+					<tr  align="left" class="blackCat"  style="vertical-align:middle; font-size:13px;">
+					  <td colspan="5">
+					    &nbsp;&nbsp;<input type="submit" name="btn_submit_inprocess" style="height:50px; width:200px;" value="Submit for processing" title="Submit for Process"/>
+					    </td>
+					  </tr>
+                </form>
+                
+              </table>
+              	</td>				
+              </tr>			
+          </table>
+
+          </td>
+
+      </tr>
+
+    </table>
+<br />
+
+</td>
+
+  </tr>
+
+</table>
+
+
+
+<script>
+var base_urlpath=location.protocol + "//" + location.hostname + (location.port && ":" + location.port) + "/{{=request.application}}/";
+
+var totalRow='{{=totalRecords}}';
+
+
+/*checked all*/
+
+function markAllRows() {    
+
+    var checkbox;	
+
+    for ( var i = 0; i < totalRow; i++ ) {		
+
+		checkbox = document.getElementById('vslfield_'+i);
+
+        if ( checkbox && checkbox.type == 'checkbox' ) {
+
+            if ( checkbox.disabled == false ) {
+
+                checkbox.checked = true;                
+
+            }
+
+        }
+
+    }
+
+    return true;
+
+}
+
+
+/*unchecked all*/
+
+function unMarkAllRows() {
+
+    var checkbox;
+
+    for ( var i = 0; i < totalRow; i++ ) {
+
+        checkbox = document.getElementById('vslfield_'+i);
+
+        if ( checkbox && checkbox.type == 'checkbox' ) {
+
+            checkbox.checked = false;
+
+        }
+
+    }
+    return true;
+}
+
+/*Count selected*/
+function countAllMark() {    
+	var numOfSelectedInvoice=0
+	var slNoStr='';
+	
+    var checkbox;	
+	
+    for ( var i = 0; i < totalRow; i++ ) {
+		
+		checkbox = document.getElementById('vslfield_'+i);		
+		var temp='vslfield_'+i;		
+        if ( checkbox && checkbox.type == 'checkbox' ) {			
+			//var confirmStatus=$("input[name='"+checkbox+"']:checked").val();
+			var confirmValue=$("input[id='"+temp+"']:checked").val();
+			if (confirmValue!=undefined){				
+				
+				if (slNoStr==''){
+					slNoStr=confirmValue;
+				}else{
+					slNoStr=slNoStr+','+confirmValue;
+				}
+				
+				numOfSelectedInvoice+=1;
+				
+			}		
+        }
+		
+    }
+	
+	$('#totalInvoiceSelect').val(numOfSelectedInvoice)
+	$('#slStrList').val(slNoStr)
+		
+    return true;
+
+}
+
+/*Count selected report*/
+function countAllMarkReport() {    
+	var numOfSelectedInvoice=0
+	var slNoStr='';
+	
+    var checkbox;	
+	
+    for ( var i = 0; i < totalRow; i++ ) {
+		
+		checkbox = document.getElementById('vslfield_'+i);		
+		var temp='vslfield_'+i;		
+        if ( checkbox && checkbox.type == 'checkbox' ) {			
+			//var confirmStatus=$("input[name='"+checkbox+"']:checked").val();
+			var confirmValue=$("input[id='"+temp+"']:checked").val();
+			if (confirmValue!=undefined){				
+				
+				if (slNoStr==''){
+					slNoStr=confirmValue;
+				}else{
+					slNoStr=slNoStr+','+confirmValue;
+				}
+				
+				numOfSelectedInvoice+=1;
+				
+			}		
+        }
+		
+    }
+	
+	$('#totalInvoiceSelectReport').val(numOfSelectedInvoice)
+	$('#slStrListReport').val(slNoStr)
+		
+    return true;
+
+}
+
+
+</script>
+
+
+
+

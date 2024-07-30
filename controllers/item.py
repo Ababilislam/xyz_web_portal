@@ -19,26 +19,27 @@ def item():
    
     submit=request.vars.submit
 
-     # pagination 
+    # pagination 
     reqPage = len(request.args)
-    # return reqPage
-    session.items_per_page=20
+
+    session.items_per_page = 20
     if reqPage:
-        page=int(request.args[0])
+        page = int(request.args[0])
     else:
-        page=0
-    # return page
-    items_per_page=session.items_per_page
-    limitby=(page*items_per_page,(page+1)*items_per_page+1)
-    # # --------end paging
-   
+        page = 0
+    items_per_page = session.items_per_page
+    if(page==0):
+        limitby = (page * items_per_page, (page + 1) * items_per_page)
+    else:
+        limitby = ((page* items_per_page), items_per_page)
+    # --------end paging
    
     
     # --------end paging
 
     if submit:
         
-        item_id=request.vars.item_id
+        # item_id=request.vars.item_id
         item_name=request.vars.item_name
         qty =request.vars.quantity
         tp =request.vars.tp_amount
@@ -58,15 +59,15 @@ def item():
             response.flash = 'Please Enter VAT AMOUNT'
         else:
             
-            check_item_sql = "select * from sm_item where cid='"+str(cid)+"'and item_id='"+str(item_id)+"' and name='"+str(item_name)+"' limit 1;"
+            check_item_sql = "select * from sm_item where cid='"+str(cid)+"' and name='"+str(item_name)+"' limit 1;"
             # return check_item_sql
             check_item = db.executesql(check_item_sql, as_dict=True)
             # return check_item
             if len(check_item)>0:
                 stock_quantity=check_item[0]['stock_quantity']
-                stock_quantity=stock_quantity+qty
+                stock_quantity=int(stock_quantity)+int(qty)
                 update_query =f""" update sm_item set stock_quantity='{stock_quantity}' 
-                where cid='{cid}' and item_id='{item_id}' and item_name='{item_name}' limit 1 """
+                where cid='{cid}' and name='{item_name}' limit 1 """
                 db.executesql(update_query)
                 response.flash= 'Item is already exist ! Successfully Update Qty!'
                 
@@ -74,8 +75,8 @@ def item():
                                 
                 insertitem_sql = f"""
                     INSERT INTO sm_item 
-                    (cid,item_id,name,stock_quantity,price, vat_amt ,updated_by) 
-                    VALUES ('{cid}', '{item_id}', '{item_name}', '{qty}', '{tp}', '{vat}', '{user_id}')"""
+                    (cid,name,stock_quantity,price, vat_amt ,updated_by) 
+                    VALUES ('{cid}', '{item_name}', '{qty}', '{tp}', '{vat}', '{user_id}')"""
                 insertitem = db.executesql(insertitem_sql)
                 response.flash= 'Successfully saved!'
                 
@@ -86,8 +87,8 @@ def item():
     if btn_filter_item:
         item_id_filter = item_id_filter.strip()
         # return item_id_filter
-        item_id = item_id_filter.split("|")[0]
-        item_name = item_id_filter.split("|")[1]
+        # item_id = item_id_filter.split("|")[0]
+        item_name = item_id_filter
         # return item_name
         condition = f" and name ='{item_name}'"
 
@@ -285,7 +286,7 @@ def items_download():
     download_records = db.executesql(download_sql, as_dict=True)
     
     myString = 'Item List\n\n'
-    myString += 'item_name,Stock Quantity,TP Amount,Vat Amount\n'
+    myString += 'item_name,Stock Quantity,TP Amount,Vat Amount,Total Amount\n'
     total=0
     attTime = ''
     totalCount = 0
@@ -296,11 +297,13 @@ def items_download():
         qty=str(recordsStr["stock_quantity"])
         tp=str(recordsStr["price"])
         vat_amt=str(recordsStr["vat_amt"])
-        
+        total_amnt = float((int(qty)*float(tp))+(int(qty)*float(vat_amt)))
         
 
 
-        myString += str(name) + ','  + str(qty) + ',' + str(tp) + ',' + str(vat_amt) +'\n'
+        myString += str(name) + ','  + str(qty) + ',' + str(tp) + ',' + str(vat_amt) + ','+str(total_amnt) +'\n'
+        
+        # myString += str(name) + ','  + str(qty) + ',' + str(tp) + ',' + str(vat_amt) +'\n'
 
     # Save as csv
     import gluon.contenttype
@@ -314,7 +317,7 @@ def get_all_item_list():
     cid = session.cid
     # return cid
     
-    sql_query = f"SELECT item_id,name from sm_item where cid = '{cid}' order by name"
+    sql_query = f"SELECT name from sm_item where cid = '{cid}' order by name"
 
     # print('get_all_item_list: sql_query: ', sql_query)
     # return sql_query
@@ -325,17 +328,17 @@ def get_all_item_list():
     for idx in range(len(rows)):
         # item_id = str(row.item_id)
         # name = str(row.name).replace('|', ' ').replace(',', ' ')
-        try:
-            item_id = rows[idx]['item_id']
-        except:
-            item_id=""
+        # try:
+        #     item_id = rows[idx]['item_id']
+        # except:
+        #     item_id=""
         name = rows[idx]['name']
         # return(item_id, ' :: ', name)
-        if item_id=="" or item_id==None:
-            item_id = " "
+        # if item_id=="" or item_id==None:
+        #     item_id = " "
         if retStr == '':
-            retStr = item_id + '|' + name
+            retStr =  name
         else:
-            retStr += ',' + item_id + '|' + name
+            retStr += ',' + name
 
     return retStr

@@ -110,9 +110,9 @@
 				<button type="submit" class="btn btn-primary">Login</button>
 			</form>
 		</div>
-		{{if session.error_flash:}}
-			<h4 id="flashMessage" style="font-size: 14px; font-weight: 400; margin-top: 5px; color: #d42d22; margin-left: 140px;">{{=session.error_flash}}</h4>
-			{{session.error_flash = None}}
+		{{if session.flashmsg:}}
+			<h4 id="flashMessage" style="font-size: 14px; font-weight: 400; margin-top: 5px; color: #d42d22; margin-left: 140px;">{{=session.flashmsg}}</h4>
+			{{session.flashmsg = None}}
 		{{pass}}
 	</div>
 

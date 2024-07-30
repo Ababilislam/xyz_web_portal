@@ -1,0 +1,312 @@
+{{extend 'layout.html'}}
+
+
+
+<link rel="stylesheet" href="{{=URL('static', 'js_and_css/ui.theme.css')}}" type="text/css" />
+
+<link rel="stylesheet" href="{{=URL('static', 'js_and_css/jquery-ui.css')}}" type="text/css" />
+
+<link rel="stylesheet" href="{{=URL('static', 'js_and_css/style.css')}}" type="text/css" />
+
+<script src="{{=URL('static','js_and_css/jquery-1.8.2.js')}}"></script>
+
+<script src="{{=URL('static','js_and_css/jquery-ui.js')}}"></script>
+
+
+
+
+
+<style type="text/css">
+    input[type=text],
+    input[type=password],
+    select {
+
+        margin: 2px 0px 2px 0px;
+
+
+
+    }
+
+    div.error {
+
+        margin-left: 0px;
+
+        width: auto;
+
+    }
+
+
+
+    #depot_id,
+    #sl,
+    #status {
+
+        background-color: #F7F7F7;
+
+    }
+
+
+
+    #sm_order_item_id {
+
+        width: 80px;
+
+
+
+    }
+
+    #sm_order_quantity {
+        width: 80px;
+        text-align: right;
+    }
+
+    #sm_order_item_name {
+
+        width: 200px;
+
+    }
+
+
+
+    #sl,
+    #status {
+
+        background-color: #F7F7F7;
+
+    }
+
+
+
+    .page_color,
+    body {
+
+        font-family: Arial, Helvetica, sans-serif;
+
+        font-size: 13px;
+
+    }
+</style>
+
+<body>
+
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;">
+        <tr height="30px">
+            <td width="500"><span class="blackCatTitle">Order-Review</span></td>
+            <form action="{{=URL(c='order',f='order',args=[page])}}" method="post">
+                <td width="400" align="right"><input name="" type="submit" value="Back" /></td>
+            </form>
+            <td>&nbsp;</td>
+        </tr>
+
+        <tr height="1px" style="background-color:#CCCCCC;">
+            <td colspan="3"></td>
+        </tr>
+    </table>
+
+
+    <table width="100%" height="500px" border="0" cellspacing="0" cellpadding="0" class="page_color">
+        <tr height="100%" style="vertical-align:top;">
+            <td>
+                <!--start-->
+                <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td width="4">&nbsp;</td>
+                        <td colspan="2"><strong>VSL: {{=visit_sl}}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td colspan="2">
+                            <table width="900" height="120" border="0" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="500" height="100" align="left" valign="top">
+                                        <table class="blackCat">
+
+                                            <tr>
+                                                <td width="120">B.O.SL</td>
+                                                <td>:&nbsp;<input type="text" name="sl" id="sl" value="{{=sl}}"
+                                                        style="width:300px" readonly /></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td width="120">Name</td>
+                                                <td>:
+                                                    {{if client_id=='' or client_id==None:}}
+
+                                                    <input type="text" name="client_id" id="client_id" size="25"
+                                                        value="" placeholder="Select Client" autocomplete="off"
+                                                        style="width:300px" />
+
+                                                    {{else:}}
+
+                                                    <input type="text" name="client_id" id="client_id" size="25"
+                                                        value="{{=client_id}}|{{=client_name}}"
+                                                        placeholder="Select Client" autocomplete="off"
+                                                        style="width:300px;background-color:#F7F7F7;" readonly />
+
+                                                    {{pass}}
+
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+
+                                                <td width="120">Mobile</td>
+
+                                                <td width="300">:
+
+
+                                                    {{=note}}
+
+                                                </td>
+
+                                            </tr>
+
+                                        </table>
+                                    </td>
+                                    <td align="right" valign="top" hight="100">
+                                        <table class="blackCat">
+                                            <tr>
+                                                <td width="120">Status</td>
+                                                <td width="300">:&nbsp;<input type="text" name="status" id="status"
+                                                        value="{{=status}}" readonly /></td>
+                                            </tr>
+                                            <tr>
+                                                <td width="120">Payment Mode</td>
+                                                <td width="300">:
+                                                    {{=payment_mode}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width="120">Address</td>
+                                                <td align="left">:{{=level3_name}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <table width="900" border="1" cellpadding="1" cellspacing="1"
+                                    class="sample_border">
+                                    <tr align="left" class="blackCatHead" height="20px" >
+                                        <td align="left">Name</td>
+                                        <td width="60" align="left">Item ID </td>
+                                        <td width="80" align="center">Category</td>
+                                        <td width="50" align="right">Qty</td>
+                                        <td width="80" align="right">TP</td>
+                                        <td width="60" align="right">Vat</td>
+                                        <td width="100" align="right">Total</td>
+                                        <td width="100" align="right">Item Total </td>
+                                        <td width="30">&nbsp;</td>
+
+                                    </tr>
+
+                                    {{ p=0}}
+                                    {{gross_total=0.0}}
+                                    {{for record in records:
+                                    item_name= record['item_name']
+                                    item_id= record['item_id']
+                                    category_id= record['category_id']
+                                    quantity= float(record['quantity'])
+                                    price= float(record['price'])
+                                    item_vat= float(record['item_vat'])
+                                    rateNvat = round(price + item_vat, 2)
+                                    item_total = round((quantity) * (rateNvat), 2)
+                                    }}
+
+                                    {{ p=p%2 }}
+                                    <tr align="left" class="blackCat" style="vertical-align:middle">
+                                        <td align="left">{{=item_name}}</td>
+                                        <td width="60" align="left">{{=item_id}}</td>
+                                        <td width="80" align="center">{{=category_id}}</td>
+                                        <td width="50" align="right">{{=quantity}}</td>
+                                        <td width="80" align="right">{{=price}}</td>
+                                        <td width="60" align="right">{{=item_vat}}</td>
+                                        <td width="100" align="right">{{= rateNvat }}</td>
+
+                                        <td width="100" align="right">
+                                            {{=item_total}}
+                                            {{ gross_total += round(item_total, 2) }} </td>
+                                        <form id="form2" name="form2" method="post"
+                                            action="{{=URL(c='order_invoice',f='delete_order_item',args=[sl,item_id])}}">
+                                            <td width="30">
+                                                {{if ((status=='Submitted') or (status=='Invoiced') or
+                                                (status=='Cancelled') or (status=='Blocked') or
+                                                (access_permission!=True)):}}
+                                                &nbsp;
+                                                {{else:}}
+                                                <input type="submit" name="btn_delete" id="btn_delete" value="X"
+                                                    class="button_update" />
+                                                {{pass}}
+                                            </td>
+
+                                        </form>
+
+                                    </tr>
+
+                                    {{ p=p+1 }}
+
+                                    {{pass}}
+
+                                    <tr align="left" class="blackCat" style="vertical-align:middle">
+
+                                        <td align="left">&nbsp;</td>
+
+                                        <td width="60" align="left">&nbsp;</td>
+
+                                        <td width="80" align="center">&nbsp;</td>
+
+                                        <td width="50" align="right">&nbsp;</td>
+
+                                        <td width="80" align="right">&nbsp;</td>
+                                        <td width="60" align="right">&nbsp;</td>
+                                        <td align="right"><strong>Net Total</strong></td>
+
+                                        <td align="right"><strong>{{= round(gross_total, 2) }}</strong></td>
+
+                                        <td width="30">&nbsp;</td>
+
+                                    </tr>
+
+
+
+                                </table>
+
+                                </tr>
+
+                            </table>
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        
+                        <td width="70">
+                            <a href="{{=URL(c ='order_invoice',f ='show_order',args=[depot_id,sl])}}"
+                                style="text-decoration:none" target="_blank">
+                                <input type="button" value="Preview" /></a>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+
+        </tr>
+
+    </table>
+
+</body>
+
+<br>
+
+
+
+<script>
+
+    jQuery("document").ready(function () {
+
+        document.getElementById("stateSelect").innerHTML = localStorage.stateStore;
+
+    });
+
+</script>

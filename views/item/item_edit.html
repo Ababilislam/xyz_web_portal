@@ -50,17 +50,17 @@
                             <tr>
                                 <td width="140" style="padding-top: 5px; padding-bottom: 5px;"> TP Amount</td>
                                 {{if tp_amount == '' or tp_amount == None or tp_amount =='None':}}
-                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="number" name="tp_amount" ></td>
+                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="number" step="0.1" name="tp_amount" ></td>
                                 {{else:}}
-                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="number" name="tp_amount" value="{{=tp_amount}}"></td>
+                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="number" step="0.1" name="tp_amount" value="{{=tp_amount}}"></td>
                                 {{pass}}
                             </tr>
                             <tr>
                                 <td width="140" style="padding-top: 5px; padding-bottom: 5px;"> Vat Amount</td>
                                 {{if vat_amt == '' or vat_amt == None or vat_amt =='None':}}
-                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="number" name="vat_amt" ></td>
+                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;" type="text" pattern="^-?\d*(\.\d+)?$" name="vat_amt" oninput="this.setCustomValidity(''); if (!this.checkValidity()) this.setCustomValidity('Please enter a valid number, e.g., 0.5 or 2.5');" ></td>
                                 {{else:}}
-                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;"type="number" name="vat_amt" value="{{=vat_amt}}"></td>
+                                <td style="padding-top: 5px; padding-bottom: 5px;"><input style= "width: 260px;" type="text" pattern="^-?\d*(\.\d+)?$" name="vat_amt" value="{{=vat_amt}}" oninput="this.setCustomValidity(''); if (!this.checkValidity()) this.setCustomValidity('Please enter a valid number, e.g., 0.5 or 2.5');"></td>
                                 {{pass}}
                             </tr>
 

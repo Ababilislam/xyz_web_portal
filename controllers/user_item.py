@@ -1,5 +1,5 @@
 def user_item():
-   
+    response.title ="Item"
     if (session.cid=='' or session.cid==None):
         redirect (URL('default','index'))
     
@@ -8,13 +8,17 @@ def user_item():
     
     # pagging
     reqPage = len(request.args)
-    session.items_per_page=20
+
+    session.items_per_page = 20
     if reqPage:
-        page=int(request.args[0])
+        page = int(request.args[0])
     else:
-        page=0
-    items_per_page=session.items_per_page
-    limitby=(page*items_per_page,(page+1)*items_per_page+1)
+        page = 0
+    items_per_page = session.items_per_page
+    if(page==0):
+        limitby = (page * items_per_page, (page + 1) * items_per_page)
+    else:
+        limitby = ((page* items_per_page), items_per_page)
     # --------end paging
     btn_filter_item=request.vars.btn_filter_item
     btn_all = request.vars.btn_all
@@ -31,8 +35,8 @@ def user_item():
     if btn_filter_item:
         item_id_filter = item_id_filter.strip()
         # return item_id_filter
-        item_id = item_id_filter.split("|")[0]
-        item_name = item_id_filter.split("|")[1]
+        
+        item_name = item_id_filter
         # return item_name
         condition = f" and name ='{item_name}'"
 
@@ -71,22 +75,25 @@ def item_list_download():
     download_records = db.executesql(download_sql, as_dict=True)
     
     myString = 'Item List\n\n'
-    myString += 'item_id,item_name,Stock Quantity,TP Amount,Vat Amount\n'
+    myString += 'item_name,Stock Quantity,TP Amount,Vat Amount,Total Amount\n'
     total=0
     attTime = ''
     totalCount = 0
     for i in range(len( download_records)):
         recordsStr =  download_records[i]
-        item_id=str(recordsStr["item_id"])
+        # item_id=str(recordsStr["item_id"])
         name=str(recordsStr["name"])
         qty=str(recordsStr["stock_quantity"])
         tp=str(recordsStr["price"])
+        if tp=='' or tp==None or tp=="None":
+            tp='0'
         vat_amt=str(recordsStr["vat_amt"])
-        
+        total_amnt = float((int(qty)*float(tp))+(int(qty)*float(vat_amt)))
+
         
 
 
-        myString += str(item_id) + ',' + str(name) + ','  + str(qty) + ',' + str(tp) + ',' + str(vat_amt) +'\n'
+        myString +=  str(name) + ','  + str(qty) + ',' + str(tp) + ',' + str(vat_amt)+ ',' + str(total_amnt) +'\n'
 
     # Save as csv
     import gluon.contenttype
@@ -101,7 +108,7 @@ def get_all_item_list():
     cid = session.cid
     # return cid
     
-    sql_query = f"SELECT item_id,name from sm_item where cid = '{cid}' order by name"
+    sql_query = f"SELECT name from sm_item where cid = '{cid}' order by name"
 
     # print('get_all_item_list: sql_query: ', sql_query)
     # return sql_query
@@ -110,19 +117,13 @@ def get_all_item_list():
     # print('rows: ',len(rows))
 
     for idx in range(len(rows)):
-        # item_id = str(row.item_id)
-        # name = str(row.name).replace('|', ' ').replace(',', ' ')
-        try:
-            item_id = rows[idx]['item_id']
-        except:
-            item_id=""
+        
         name = rows[idx]['name']
-        # return(item_id, ' :: ', name)
-        if item_id=="" or item_id==None:
-            item_id = " "
+        # return name
+        
         if retStr == '':
-            retStr = item_id + '|' + name
+            retStr = name
         else:
-            retStr += ',' + item_id + '|' + name
+            retStr += ',' + name
 
     return retStr

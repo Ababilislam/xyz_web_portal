@@ -37,16 +37,19 @@ def check_user():
 
         user_type = ''
         name = ''
-        check_user_type_sql = "SELECT * FROM sm_user where cid = '"+c_id+"' and user_id = '"+str(u_id)+"' group by user_id limit 1 ;"
+        check_user_type_sql = f"SELECT * FROM sm_user where cid = '{c_id}' and user_id = '{u_id}' and PASSWORD='{u_pass}' group by user_id limit 1 ;"
+        # return check_user_type_sql
         check_user_type = db.executesql(check_user_type_sql, as_dict = True)
-        if len(check_user_type):
+        # return len(check_user_type)
+        if len(check_user_type)>0:
             for u in range(len(check_user_type)):
                 user_records = check_user_type[u]
                 user_type = user_records['user_type']
                 name = user_records['name']
 
-        else:
-            session.error_flash = 'Invalid User !'
+        elif len(check_user_type)==0:
+            session.flashmsg = 'Invalid User !'
+            # return session.flashmsg
             redirect(URL('index'))
 
         session.user_type = user_type

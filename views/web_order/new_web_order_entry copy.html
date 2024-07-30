@@ -1,0 +1,681 @@
+{{extend 'layout.html'}}
+
+
+
+<script>
+var base_url=location.protocol + "//" + location.hostname + (location.port && ":" + location.port) + "/{{=request.application}}/";
+
+$(function() {
+ 
+// ================================================ ITEM ID AUTO COMPLETE START =======================================
+employeeListStr="";  
+    // alert(base_url+'default/get_active_item_list')  
+    $.ajax({
+      url: base_url+'default/get_item_list',
+      success: function(retStr) {
+        employeeListStr=retStr 
+      }
+    }); 
+
+    $('#item_id').keyup(function(){
+      $("#stock_qty").html('')
+
+      // alert(employeeListStr)
+      localStorage.employeeListStr=employeeListStr
+      valueList = employeeListStr.split(','); 
+      var searchValue=$("#item_id").val();
+      var valueList_new=new Array();
+      lc=0;
+      i =0;
+      var valueStr="";    
+      while (i < valueList.length)
+      {
+        valueStr=valueList[i];
+        i=i+1;  
+        // alert ('fgdf')       
+        var ret=valueStr.toUpperCase().match(searchValue.toUpperCase());
+
+        if (ret!=null){
+          valueList_new[lc]=valueStr;
+          lc=lc+1;
+          if (lc==30){
+            break;
+          };
+        }else{
+          continue;
+        }         
+      }; 
+
+       //-------------- auto complete source
+      $( "input#item_id" ).autocomplete({
+        source: valueList_new
+      });  
+      
+      }); 
+
+// ================================================ ITEM AUTO COMPLETE END ================================================
+
+
+
+// ================================================ REP SUP ID AUTO COMPLETE START =======================================
+var repListStr="";  
+    var client_id = $("#client").val();
+    // var region = $("#region_id").val();
+    // var zone = $("#zone_id").val();
+    // var area = $("#area_id").val();
+    // var territory = $("#territory_id").val();
+    // alert(base_url+'web_order/get_rep_sup_id_name?region='+region+'&zone='+zone+'&area='+area+'&territory='+territory)
+    // alert(base_url+'web_order/get_rep_sup_id_name?client_id='+client_id)
+    $.ajax({
+      // url: base_url+'web_order/get_rep_sup_id_name?region='+region+'&zone='+zone+'&area='+area+'&territory='+territory,
+      url: base_url+'web_order/get_rep_sup_id_name?client_id='+client_id,
+      success: function(recStr) {
+        // alert (recStr)
+        repListStr=recStr 
+      }
+    }); 
+
+// =================================
+$('#rep').keyup(function(){
+      // alert('ok')
+      //-------------------------
+      var ref_list = repListStr.split(',');  
+      var ref_name=$("#rep").val();
+      // alert(ref_name)
+      
+      //---------------- auto complete combo list
+      var ref_list_new=new Array();
+      lc=0;
+      i =0;
+      var refStr="";        
+      while (i < ref_list.length)
+      {
+        refStr=ref_list[i];
+        i=i+1;          
+        var res=refStr.toUpperCase().match(ref_name.toUpperCase());
+        if (res!=null){
+          ref_list_new[lc]=refStr;
+          lc=lc+1;
+          if (lc==30){
+            break;
+          };
+        }else{
+          continue;
+        }         
+      };
+      
+      //-------------- auto complete source
+      $( "input#rep" ).autocomplete({
+        source: ref_list_new
+      });
+    
+    }); 
+// ================================================ REP SUP ID AUTO COMPLETE END =======================================
+
+
+// ================================================ CLIENT ID AUTO COMPLETE START =======================================
+var clientListStr="";  
+   var depot = $("#depot").val();
+    // alert(base_url+'web_order/get_client_id_name?depot='+depot)
+    $.ajax({
+      url: base_url+'web_order/get_client_id_name?depot='+depot,
+      success: function(retStr) {
+        // alert (retStr)
+        clientListStr=retStr 
+      }
+    }); 
+
+// =================================
+$('#client').keyup(function(){
+      // alert('ok')
+      //-------------------------
+      var ref_list = clientListStr.split(',');  
+      var ref_name=$("#client").val();
+      // alert(ref_name)
+      
+      //---------------- auto complete combo list
+      var ref_list_new=new Array();
+      lc=0;
+      i =0;
+      var refStr="";        
+      while (i < ref_list.length)
+      {
+        refStr=ref_list[i];
+        i=i+1;          
+        var res=refStr.toUpperCase().match(ref_name.toUpperCase());
+        if (res!=null){
+          ref_list_new[lc]=refStr;
+          lc=lc+1;
+          if (lc==30){
+            break;
+          };
+        }else{
+          continue;
+        }         
+      };
+      
+      //-------------- auto complete source
+      $( "input#client" ).autocomplete({
+        source: ref_list_new
+      });
+    
+    }); 
+// ================================================ CLIENT ID AUTO COMPLETE END =======================================
+
+
+
+});
+
+// ----------------------------------- AUTO FILL STOCK QUANTITY FOR ITEM ---------------------------------------
+
+function get_stock_qty(){
+  var item_id=$("#item_id").val().split('|')[0];
+  var item_id_n=$("#item_id").val() 
+
+  // alert(base_url+'web_order/get_stock_qty?item_id='+item_id)
+  $.ajax({
+
+    url: base_url+'web_order/get_stock_qty?item_id='+item_id,
+    success: function(data) {
+
+      var itemdataArray = data.split('|');
+      var stock_qty = itemdataArray[0];
+      var quantity = itemdataArray[1];
+      var item_per_unit = itemdataArray[2];
+    
+    $("#stock_qty").val(stock_qty);
+    $("#depot_stock_qty").val(quantity);
+    $("#item_per_unit").val(item_per_unit);
+  }
+  }); 
+
+}
+
+// ----------------------------------- AUTO FILL NAME, GENDER, AGE FOR COUNTER CUSTOMER START ---------------------------------
+
+function get_client_level_info(){
+  var client_id=$("#client").val();
+  // alert(phone)
+  // alert(base_url+'web_order/get_level_info?client_id='+client_id)
+  $.ajax({
+    url: base_url+'web_order/get_level_info?client_id='+client_id,
+    success: function(data) {
+    
+      var dataArray = data.split('|');
+      var region_id = dataArray[0];
+      var region_name = dataArray[1];
+      var zone_id = dataArray[2];
+      var zone_name = dataArray[3];
+      var area_id = dataArray[4];
+      var area_name = dataArray[5];
+      var territory_id = dataArray[6];
+      var territory_name = dataArray[7];
+      
+      $("#region").val(region_id+' | '+region_name);
+      $("#zone").val(zone_id+' | '+zone_name);
+      $("#area").val(area_id+' | '+area_name);
+      $("#territory").val(territory_id+' | '+territory_name);
+
+      $("#region_id").val(region_id);
+      $("#zone_id").val(zone_id);
+      $("#area_id").val(area_id);
+      $("#territory_id").val(territory_id);
+  }
+  }); 
+
+}
+// ----------------------------------- AUTO FILL NAME, GENDER, AGE FOR COUNTER CUSTOMER END ---------------------------------
+
+
+// ------------------- AUTO FILL CUSTOMER ID, NAME, PHONE GENDER, AGE FOR COUNTER CUSTOMER START ----------------------------
+
+function get_depot_all_customer_all_info(){
+  var depot=$("#depot").val();
+  alert(depot)
+  alert(base_url+'web_order/get_customer_info?depot='+depot)
+  $.ajax({
+
+    url: base_url+'counter/get_customer_info?depot='+depot,
+    success: function(data) {
+    
+      var dataArray = data.split('|');
+      var customer_id = dataArray[0];
+      var phone = dataArray[1];
+      var customer_name = dataArray[2];
+      var gender = dataArray[3];
+      var age = dataArray[4];
+
+      $("#customer_id").val(customer_id);
+      $("#phone").val(phone);
+      $("#customer_name").val(customer_name);
+      $("#gender").val(gender);
+      $("#age").val(age);
+  }
+  }); 
+
+}
+// ----------------------------------- AUTO FILL NAME, GENDER, AGE FOR COUNTER CUSTOMER END ---------------------------------
+
+
+
+// ----------------------------- COUNTER DISCOUNT TYPE SELECTION FUNCTION START -------------------------------------------
+
+// Function to update discount options based on physician selection
+function updateDiscountOptions() {
+  var physicianSelect = document.getElementById('physician_id');
+  var discountSelect = document.getElementById('discount_type_id');
+
+  // Get the selected physician value
+  var selectedPhysician = physicianSelect.value;
+
+  // Get the discount select options
+  var discountOptions = discountSelect.getElementsByTagName('option');
+
+  // Clear existing options
+  discountSelect.innerHTML = '';
+
+  // Create default discount options
+  var defaultOptions = [
+    { value: 'MRP', text: 'MRP' },
+    { value: 'COUNTER WHOLESALE', text: 'COUNTER WHOLESALE' },
+    { value: 'E-SHOP', text: 'E-SHOP' },
+    { value: 'HAMDARD FOUNDATION', text: 'HAMDARD FOUNDATION' },
+    { value: 'STAFF', text: 'STAFF' },
+    // Add other default options as needed
+  ];
+
+  // Create physician-specific discount options
+  var physicianOptions = [
+    { value: 'MRP', text: 'MRP' },
+    { value: 'FREEDOM FIGHTER', text: 'FREEDOM FIGHTER' },
+    { value: 'VIP', text: 'VIP' },
+    { value: 'STAFF', text: 'STAFF' },
+    // Add other physician-specific options as needed
+  ];
+
+  // Use default options if no physician is selected, otherwise use physician-specific options
+  var optionsToUse = selectedPhysician ? physicianOptions : defaultOptions;
+
+  // Create and append option elements based on the selected options
+  optionsToUse.forEach(function (optionData) {
+    var option = document.createElement('option');
+    option.value = optionData.value;
+    option.text = optionData.text;
+    discountSelect.appendChild(option);
+  });
+}
+
+// Call the function initially to set the correct discount options
+updateDiscountOptions();
+</script>  
+
+<script>
+// Function to show/hide the "Staff" row based on the selected discount type
+$(document).ready(function () {
+  $("#discount_type_id").change(function () {
+    var selectedDiscountType = $(this).val();
+    var staffRow = $("#staffRow");
+
+    if (selectedDiscountType === "STAFF") {
+      staffRow.show();
+    } else {
+      staffRow.hide();
+    }
+  });
+
+  // Call the change event handler initially to set the initial visibility
+  $("#discount_type_id").trigger("change");
+});
+
+// ----------------------------- COUNTER DISCOUNT TYPE SELECTION FUNCTION END -------------------------------------------
+
+</script>
+
+
+<table width="100%"  height="100%"   border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
+ 
+  <tr  height="1px" >
+    <td colspan="3" ></td>
+  </tr>
+
+  <tr>
+    <td>
+    <table border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
+      <tr height="30px" >
+        <td width="500" style="background-color:#FFFFFF;" >
+          <span class="blackCatTitle">&nbsp;New Order</span>
+        </td>
+        <form action="{{=URL(c='order',f='order',args=[page])}}" method="post">
+          <td width="400" align="right"><input name="" type="submit"  value="Back"/></td>
+          </form>
+        <td width="500" >&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr  height="1px" style="background-color:#CCCCCC;">
+        <td colspan="3" ></td>
+      </tr>
+    </table>
+
+    <table width="100%" align="left" height="100%" border="0"  cellpadding="0" cellspacing="0" style="margin-left:auto;margin-right:auto;background-color:#F5F5F5; font-size: small;" >
+      <tr>
+        <td height="80%" valign="middle">
+                            <!-- INSERT-->
+      <form  name="form1" action="{{=URL(c='web_order',f='new_web_order_entry')}}" method="post"  >
+        <table width="100%" align="left" cellpadding="2" class="rounded_corner" style="background-color:#F5F5F5">
+                
+          <tr width="100%">
+            
+            <td width="100px" style="vertical-align: middle;">Branch</td>
+            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+            <td width="200px" style="padding-top:5px" >
+              <input  type="hidden" name="depot" id="depot" value="{{=session.depot_id}}" size="10"  style="width:200px"/>
+            	<input  type="text" name="depot_id" id="depot_id" value="{{=session.depot_id}} | {{=session.user_depot_name}}" size="10" readonly style="width:200px"/>
+            </td>
+            <td width="100px"><span> Order SL</span></td>
+            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+            <td style="padding-top:10px">
+              <input  type="text" name="order_sl_id" id="order_sl_id" value="{{=order_sl}}" size="10" style="width:200px" readonly />
+            </td>
+            
+              <div style="width: 10px;">
+                <td>Territory</td>
+                <td width="10px" style="vertical-align: middle;">:</td>
+                <td style="padding-top:5px">
+                  {{if session.territory == '' or session.territory == 'None' or session.territory == None:}}
+                  <input  type="text" name="territory" id="territory" value="" placeholder="Territory" size="10"style="width:200px" readonly />
+                  {{else:}}
+                  <input  type="text" name="territory" id="territory" value="{{=session.territory}}" size="10"  style="width:200px" readonly />
+                  {{pass}}
+                </td>
+              </div>
+            
+            
+            
+            
+            <td width="100px" style="vertical-align: middle;">Status</td>
+            <td width="10px" style="font-size: 20px;vertical-align: middle;">:</td>
+            <td style="padding-top:5px">
+              {{if session.status == '' or session.status == 'None' or session.status == None:}}
+              <input  type="text" id="status" name="status" readonly value="Draft" placeholder="Draft" size="10" style="width:200px"/>
+              {{else:}}
+              <input  type="text" id="status" name="status" readonly value="{{=session.status}}" size="10" style="width:200px"/>
+              {{pass}}
+            </td>
+          </tr>
+
+          <tr>
+            <td width="100px" style="vertical-align: middle;"> Order SL</td>
+            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+            <td style="padding-top:10px">
+              <input  type="text" name="order_sl_id" id="order_sl_id" value="{{=order_sl}}" size="10" style="width:200px" readonly />
+            </td>
+            <td width="100px"></td>
+
+            <td width="100px" style="vertical-align: middle;">Region</td>
+            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+            <td style="padding-top:5px">
+              {{if session.region == '' or session.region == 'None' or session.region == None:}}
+              <input  type="text" name="region" id="region" value="" placeholder="Region" size="10" readonly style="width:200px"  />
+              {{else:}}
+              <input  type="text" name="region" id="region" value="{{=session.region}}" size="10" readonly style="width:200px" />
+              {{pass}}
+            </td>
+
+          </tr>
+          <tr >
+            <td width="100px" style="vertical-align: middle;">Order Date</td>
+            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+            <td style="padding-top:5px">
+              {{sales_date = current_date}}
+              <input  type="text" name="sales_date_id" id="sales_date_id" value="{{=sales_date}}" autocomplete="off" placeholder="Sales Date" size="10"  style="width:200px"  readonly />
+            </td>
+            <td width="100px"></td>
+            <td width="100px" style="vertical-align: middle;">Zone</font></td>
+            <td width="10px" style="font-size: 20px;vertical-align: middle;">:</td>
+            <td style="padding-top:5px">
+              {{if session.zone == '' or session.zone == 'None' or session.zone == None:}}
+              <input  type="text" name="zone" id="zone" value="" autocomplete="off"  placeholder="Zone" size="10" style="width:200px" readonly  />
+              {{else:}}
+              <input  type="text" name="zone" id="zone" value="{{=session.zone}}" autocomplete="off"  size="10" style="width:200px" readonly />
+              {{pass}}
+            </td>
+          </tr>
+
+          <tr >
+            <td width="100px" style="vertical-align: middle;">Client / Retailer<font style="color:#B93976; font-size:20px">*</font></td>
+            <td width="10px" style="font-size: 20px;vertical-align: middle;">:</td>
+            <td style="padding-top:5px">
+              {{if session.client == '' or session.client == 'None' or session.client == None:}}
+              <input  type="text" name="client" id="client" value="" autocomplete="off"  placeholder="Client ID / Name" size="10" style="width:200px" required  />
+              {{else:}}
+              <input  type="text" name="client" id="client" value="{{=session.client}}" autocomplete="off"  size="10" style="width:200px" required onclick="get_depot_all_customer_all_info()"/>
+              {{pass}}
+            </td>
+            <td width="100px"></td>
+
+            <td width="100px" style="vertical-align: middle;">Area</td>
+            <td width="10px" style="font-size: 20px;vertical-align: middle;">:</td>
+            <td style="padding-top:5px">
+              {{if session.area == '' or session.area == 'None' or session.area == None:}}
+              <input  type="text" name="area" id="area" value="" autocomplete="off"  placeholder="Area" size="10" style="width:200px" readonly />
+              {{else:}}
+              <input  type="text" name="area" id="area" value="{{=session.area}}" autocomplete="off"  size="10" style="width:200px" readonly />
+              {{pass}}
+            </td>
+            
+          </tr>
+
+          <tr>
+            <td width="100px" style="vertical-align: middle;">Rep / Sup<font style="color:#B93976; font-size:20px">*</font></td>
+            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+            <td style="padding-top:5px">
+              {{if session.rep == '' or session.rep == 'None' or session.rep == None:}}
+              <input  type="text" name="rep" id="rep" value="" autocomplete="off"  placeholder="Rep / Sup" size="10" style="width:200px" required onclick="get_client_level_info()"/>
+              {{else:}}
+              <input  type="text" name="rep" id="rep" value="{{=session.rep}}" autocomplete="off"  size="10" style="width:200px" required onclick="get_customer_info()"/>
+              {{pass}}
+            </td>
+            <td width="100px"></td>
+
+            
+          </tr>
+
+          <tr id="staffRow" style="display: none;">
+            <td width="100px" style="vertical-align: middle;">Staff ID<font style="color:#B93976; font-size:20px">*</font></td>
+            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+            <td style="padding-top:5px">
+              {{#if session.staff_id == '' or session.staff_id == 'None' or session.staff_id == None:}}
+              <input type="text" name="staff_id" id="staff_id" value="" placeholder="Staff ID"  size="10" style="width:200px"/>
+              {{#else:}}
+              <!-- <input type="text" name="staff_id" id="staff_id" value="{{#=session.staff_id}}"  size="10" style="width:200px"/> -->
+              {{#pass}}
+            </td>
+          </tr>
+
+          <tr>
+            <td width="100px" style="vertical-align: middle;">Payment Type <font style="color:#B93976; font-size:20px">*</font></td>
+            <td width="10px" style="font-size: 20px;vertical-align: middle;">:</td>
+            <td style="padding-top:5px">
+              <select id="pay_type" name="pay_type" style="width:215px" required>
+                {{if session.pay_type == '' or session.pay_type == 'None' or session.pay_type == None:}}
+                <option value="Cash">Cash</option>
+                <option value="Credit">Credit</option>
+                {{else:}}
+                <option value="{{=session.pay_type}}">{{=session.pay_type}}</option>
+                {{pass}}
+              </select>
+            </td>
+            <td width="100px"></td>
+
+            <td width="100px" style="vertical-align: middle;">Shift <font style="color:#B93976; font-size:20px">*</font></td>
+            <td width="10px" style="font-size: 20px;vertical-align: middle;">:</td>
+            <td style="padding-top:5px">
+              <select id="shift" name="shift" style="width:215px" required>
+                {{if session.shift == '' or session.shift == 'None' or session.shift == None:}}
+                <option value="Morning">Morning</option>
+                <option value="Evening">Evening</option>
+                {{else:}}
+                <option value="{{=session.shift}}">{{=session.shift}}</option>
+                {{pass}}
+              </select>
+            </td>
+
+          </tr>
+
+          <tr>
+            <td width="100px" style="vertical-align: middle;">Delivery Date <font style="color:#B93976; font-size:20px">*</td>
+            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+            <td style="padding-top:5px">
+              {{if session.delivery_date == '' or session.delivery_date == 'None' or session.delivery_date == None:}}
+              <input  type="text" name="delivery_date_id" id="delivery_date_id" value="{{=sales_date}}" placeholder="Delivery_date" size="10"style="width:200px" required class="date"/>
+              {{else:}}
+              <input  type="text" name="delivery_date_id" id="delivery_date_id" value="{{=session.delivery_date}}" size="10"  style="width:200px" class="date" />
+              {{pass}}
+            </td>
+            <td width="100px"></td>
+
+            <td width="100px" style="vertical-align: middle;">Note</td>
+            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+            <td style="padding-top:5px">
+              {{if session.note == '' or session.note == 'None' or session.note == None:}}
+              <input  type="text" name="note_id" id="note_id" value="" placeholder="Note" size="10"style="width:200px"  />
+              {{else:}}
+              <input  type="text" name="note_id" id="note_id" value="{{=session.note}}" size="10"  style="width:200px" />
+              {{pass}}
+            </td>
+
+            
+
+          </tr>
+        </table>  
+
+        <table border="0" cellpadding="1" cellspacing="1" style="background-color: #F5F5F5;border: none;">
+
+            <tr >
+              <td width="200px" style="padding-top: 10px;">
+                <input type="text" name="item_id" id="item_id" value="{{#=session.item_id}}" size="10" placeholder="Item ID / Name" autocomplete="off" required style="width:200px;height:20px"/>
+              </td>
+              <td width="80px" style="padding-top: 10px;padding-left: 10px;">
+                <input  type="text" name="qty_id" id="qty_id" autocomplete="off"  value="{{#=session.qty_id}}" size="10" placeholder="Quantity" required style="width:60px;height:20px" onclick="get_stock_qty()"/>
+              </td>
+             
+              <td  align="left" width="120px" style="padding-top: 10px;padding-left: 10px;">
+                <input  type="submit" name="submit_btn" id="submit_btn" value="Save" style="vertical-align:middle;height:30px ;background-color: #6BCA9A;color: rgb(247, 247, 247); width:80px;" onClick="counter_submit();"/>
+              </td>
+               
+            </tr>
+                
+      </table>
+    </form>
+
+        <table  border="1" cellpadding="1" cellspacing="2" class="sample_border"  >
+
+          <tr class="blackCatHead" style="background-color: #c4e3ec;">
+            <td width="300px" style="vertical-align: middle; padding-left: 10px; height: 30px;">Name</td>
+            <td width="80px"  style="vertical-align: middle;">Item ID</td>
+            <td align="left"width="120px" style="vertical-align: middle;">Category</td>
+            <td align="right" width="50px"  style="vertical-align: middle;">Quantity</td>
+            <td align="right"  width="100px" style="vertical-align: middle;">TP</td>
+            <td align="right"width="120px" style="vertical-align: middle;">Vat</td>
+            <td align="right" width="80px" style="vertical-align: middle;">Total</td>
+            <td align="right"width="120px" style="vertical-align: middle;">Item Total</td>
+            <td align="right" width="80px" style="vertical-align: middle;"></td>
+            <td align="right" width="40px" style="vertical-align: middle;"></td>
+          </tr>
+
+          {{if len(order_temp_record) > 0:}}
+          {{
+            grand_total = 0
+            total = 0
+            item_total = 0
+            net_total = 0
+            for i in range(len(order_temp_record)):
+                records_ov_dict=order_temp_record[i]  
+                record_id=str(records_ov_dict["id"]) 
+                order_sl=str(records_ov_dict["sl"]) 
+                item_name=str(records_ov_dict["item_name"])
+                item_id=str(records_ov_dict["item_id"]) 
+                category_id=records_ov_dict["category_id"]
+                quantity= records_ov_dict["quantity"]
+                price= records_ov_dict["price"]    
+                vat=str(records_ov_dict["item_vat"])
+                total = float(price) + float(vat)
+                item_total = float(total) * float(quantity)
+                net_total += item_total
+          }}
+
+        <tr  align="left" class="blackCat"  style="vertical-align:middle">
+          <form  name="form2" action="{{=URL(c='web_order',f='new_web_order_entry', args = [record_id, price, item_id])}}" method="post"  >
+            <td style="vertical-align: middle;padding-left: 5px">{{=item_name}}</td>
+            <td style="vertical-align: middle;">{{=item_id}}</td>
+            <td align="left" width="120px" style="vertical-align: middle;">{{=category_id}}</td>
+            <td align="right" >
+              <input align="right" type="text" name="quantity_id" id="quantity_id" value="{{=quantity}}" size="10"  autocomplete="off" style="width:60px;height:25px" />
+            </td> 
+            <td align="right" width="120px" style="vertical-align: middle;">{{=price}}</td>
+            <td align="right"  width="100px" style="vertical-align: middle;">{{=vat}}</td>
+            <td align="right"  width="120px" style="vertical-align: middle;">{{=easy_format(total)}}</td>
+            <td align="right"  width="120px" style="vertical-align: middle;">{{=easy_format(item_total)}}</td>
+            {{#grand_total += total_price }}
+            {{#total_discount_sum += total_discount }}
+            
+            <td  align="right" width="100px" style="vertical-align: middle;padding-right: 20px;">
+              <input  type="submit" name="update_btn" id="update_btn" value="Update" style="vertical-align:middle;height:30px;background-color: #20B5E3;color: #FFFFFF; width:80px;" />
+            </td>
+          </form>
+            <form  name="form1" action="{{=URL(c='web_order',f='order_delete',args=[record_id, order_sl,item_id])}}" method="post"  >
+            <td  align="center" width="40px" style="vertical-align: middle;">
+              <input  type="submit" name="delete_btn" id="delete_btn" value="X" style="vertical-align:middle;height:30px;background-color: #CA786B;color: #FFFFFF; width:40px;" />
+            </td>
+          </form>
+            {{pass}}
+          </tr>
+
+          <tr class="blackCat">
+
+           <td colspan="7" align="right" style="font-weight: bold; border:none;">Net Total<strong>:</strong></td>
+           <td align="right" style="font-weight: bold;">{{=easy_format(round(net_total))}}</td>
+            
+          </tr>
+
+          <tr style="border:none">
+           <td colspan="10" style="height:30px;border: none;">&nbsp;&nbsp;</td>
+          </tr>
+
+          <tr class="blackCat">
+            <form  name="form2" action="{{=URL(c='web_order',f='new_web_order_entry', args = [order_sl])}}" method="post"  >
+              <td colspan="2"  align="left" width="120px" style="vertical-align: middle;border: none;padding-left: 10px;">
+                <input  type="submit" name="cancel_btn" id="cancel_btn" value="Order Cancel" style="vertical-align:middle;height:35px;background-color: #CA786B;color: #FFFFFF; width:120px;" />
+              </td>
+            </form>
+            <form  name="form2" action="{{=URL(c='web_order',f='new_web_order_entry', args = [order_sl, net_total ])}}" method="post"  >
+              <td colspan="6"  width="120px" align="right" style="vertical-align: middle; border: none;">
+                <input  type="submit" name="submit_all_btn" id="submit_all_btn" value="Submit" style="vertical-align:middle;height:35px ; width:120px; background-color: #5C72F0;color: #FFFFFF;" />
+              </td>
+            </form>
+          </tr>
+            {{else:}}
+          <tr >
+             <td></td>
+             <td></td>
+             <td></td>
+             <td></td>
+             <td></td>
+             <td></td>
+             <td></td>
+             <td></td>  
+          </tr>
+            {{pass}}
+          <tr>
+            <td height="300px">&nbsp; &nbsp; &nbsp; &nbsp;</td>
+          </tr>
+
+          <tr height="1px" style="background-color:#CCCCCC;">
+            <td colspan="20"></td>
+          </tr>
+    </table>
+
+  </td>
+  </tr>
+        
+</table>
