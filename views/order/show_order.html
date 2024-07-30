@@ -1,0 +1,204 @@
+{{extend 'layout_report.html'}}
+
+<html>
+
+<head>
+
+<script type="text/javascript">
+
+function print_page()
+
+  {
+
+    window.print()
+
+  }
+
+</script>
+
+</head>
+
+<body>
+
+<div class="blackCatTitle">Order</div>
+
+<br/> 
+
+
+
+<table width="800" border="0" cellspacing="1" cellpadding="1"  class="table_row2">          
+
+			
+
+          <tr >
+            <td valign="top" ><b>B.O.SL</b></td>
+
+            <td valign="top" ><strong>: </strong>{{=sl}} </td>
+
+            <td width="100" valign="top" >
+              </b></td>
+            <td width="100" valign="top" ><strong>Status<br>
+            </strong></td>
+
+            <td width="200" valign="top" ><b>:</b> {{=status}}</td>
+
+  </tr>
+
+          <tr >
+            <td valign="top" ><b>Client</b></td>
+
+            <td valign="top" ><b>: </b>{{=client_name}}</td>
+            <td width="100" valign="top" >
+            </b></td>
+            <td width="100" valign="top" ><strong>Address</strong></td>
+
+            <td width="200" valign="top" ><b>:</b> {{=level3_name}}</td>
+           
+
+          </tr>
+          <td width="100" valign="top" ><strong> Note</strong></td>
+
+          <td width="200" valign="top" ><b>:</b> {{=req_note}}</td>
+          <tr >
+
+            
+
+            
+
+          </tr>
+
+          <tr >
+
+            
+
+            
+
+          </tr>
+
+          <tr >
+
+
+          </tr>
+
+          <tr >
+
+            <td valign="top" >&nbsp;</td>
+
+            <td valign="top" >&nbsp;</td>
+
+            
+
+          </tr>
+
+           {{pass}}
+
+</table>
+
+  <table width="800" border="1" cellpadding="1" cellspacing="1" class="sample_border" >
+
+
+
+  <tr align="left" class="blackCatHead"  height="20px" ; style="vertical-align:middle; background-color:#E6E6E6">
+
+    <td >Name</td>
+
+    <!-- <td width="80" >Item ID</td> -->
+
+
+    <td width="60" align="right"  >Qty</td>
+
+    <td width="80" align="right"  >TP</td>
+    <td width="60" align="right"  >Vat</td>
+
+    <td width="100" align="right"  >Amount </td>
+
+    </tr>
+
+    {{ p=0}} 		  
+
+    {{gross_total=0.0}}
+
+
+
+    {{for i in sorted(range(len(showList))):}}
+
+	{{dictData=showList[i]}}
+
+	
+
+	
+
+    {{qty=0;rate=0}}
+
+    
+
+    
+
+    {{ p=p%2 }}
+
+  <tr  align="left" class="blackCat"  style="vertical-align:middle; background-color:#FBFBFB">
+
+    <td >{{=dictData['item_name']}}</td>
+
+
+
+
+
+    <td width="60" align="right" >{{qty=dictData['quantity']}}{{=qty}}</td>
+
+    <td width="80" align="right" >{{rate=dictData['price']}}{{=rate}} </td>
+    <td width="60" align="right" >{{item_vat=dictData['item_vat']}}{{=item_vat}}</td>
+
+    <td width="100" align="right" >{{amt=qty*(rate+item_vat)}}{{gross_total+=amt}}{{=amt}}</td>
+
+    </tr>
+
+    {{ p=p+1 }} 
+
+    {{pass}}
+
+	
+
+	<tr  align="left" class="blackCat"  style="vertical-align:middle; background-color:#FBFBFB">
+
+    <!-- <td colspan="4" align="right" style="border-bottom-style:none; border-left:none">&nbsp;</td> -->
+
+    <!-- <td width="80" align="right" >&nbsp;</td> -->
+    <td colspan="4" width="60" align="right" ><strong>Total</strong></td>
+
+    <td width="100" align="right" ><strong>{{=gross_total}}</strong></td>
+
+    </tr>
+
+	
+
+</table>
+
+	
+
+  <table width="800px" border="0">
+
+          <tr>
+
+            <td align="right" class="report_body">&nbsp;</td>
+
+          </tr>
+
+          <tr>
+
+            <td align="right" class="report_body"></td>
+
+          </tr>
+
+          <tr><td align="right" class="report_body"><a href="" onClick="print_page()" style="text-decoration:none">Print</a></td></tr>
+
+</table>
+
+
+
+    <br/>
+
+</body>
+
+</html>
+

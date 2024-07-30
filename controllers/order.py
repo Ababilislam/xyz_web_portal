@@ -365,6 +365,51 @@ def download_order():
 
 
 
+def show_order():
+    c_id=session.cid
+    req_sl=request.args(0)
+    # return req_sl
+    #--------------- Title
+    response.title='Preview Order'
+    #-------------
+
+    #----------- 
+    
+    sl=0
+    
+    client_name=''
+    payment_mode=''
+    req_note=''
+    status=''
+    
+    #Get head record
+    order_head_rec_sql = f"SELECT * FROM sm_order_head where cid = '{c_id}' and sl = '{req_sl}' group by sl limit 1"
+    # return order_head_rec_sql
+    order_head_rec = db.executesql(order_head_rec_sql,as_dict=True)
+    for row in order_head_rec:
+        sl = row['sl']
+        client_name = row['client_name']
+        payment_mode = row['payment_mode']
+        req_note = row['note']
+        status = row['status']
+        level3_name = row['level3_name']
+        order_datetime = row['order_datetime']
+
+    
+    #Get record for detail and treat as list
+    showList=[]
+    detailRecords_sql = f"SELECT item_id,item_name,quantity,price,item_vat FROM sm_order WHERE cid='{c_id}' and sl = '{req_sl}'"
+    # return detailRecords_sql
+    detailRecords = db.executesql(detailRecords_sql,as_dict=True)
+    # for data in detailRecords:
+    #     # return str(data)
+    #     showList.append(str(data))
+    # return showList
+
+    
+    return dict(showList=detailRecords,sl=sl,order_datetime=order_datetime,
+                client_name=client_name,payment_mode=payment_mode,req_note=req_note,level3_name=level3_name,status=status)
+
 
 
 
