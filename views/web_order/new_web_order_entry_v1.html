@@ -1,0 +1,597 @@
+{{extend 'layout.html'}}
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+
+<script>
+var base_url=location.protocol + "//" + location.hostname + (location.port && ":" + location.port) + "/{{=request.application}}/";
+
+$(function() {
+ 
+// ================================================ ITEM ID AUTO COMPLETE START =======================================
+employeeListStr="";  
+    // alert(base_url+'web_order/get_item_list')  
+    $.ajax({
+      url: base_url+'web_order/get_item_list',
+      success: function(retStr) {
+        employeeListStr=retStr 
+      }
+    }); 
+
+    $('#item_id').keyup(function(){
+      $("#stock_qty").html('')
+
+      // alert(employeeListStr)
+      localStorage.employeeListStr=employeeListStr
+      valueList = employeeListStr.split(','); 
+      var searchValue=$("#item_id").val();
+      var valueList_new=new Array();
+      lc=0;
+      i =0;
+      var valueStr="";    
+      while (i < valueList.length)
+      {
+        valueStr=valueList[i];
+        i=i+1;  
+        // alert ('fgdf')       
+        var ret=valueStr.toUpperCase().match(searchValue.toUpperCase());
+
+        if (ret!=null){
+          valueList_new[lc]=valueStr;
+          lc=lc+1;
+          if (lc==30){
+            break;
+          };
+        }else{
+          continue;
+        }         
+      }; 
+
+       //-------------- auto complete source
+      $( "input#item_id" ).autocomplete({
+        source: valueList_new
+      });  
+      
+      }); 
+
+// ================================================ ITEM AUTO COMPLETE END ================================================
+
+
+
+// ================================================ REP SUP ID AUTO COMPLETE START =======================================
+// var repListStr="";  
+//     var client_id = $("#client").val();
+    // var region = $("#region_id").val();
+    // var zone = $("#zone_id").val();
+    // var area = $("#area_id").val();
+    // var territory = $("#territory_id").val();
+    // alert(base_url+'web_order/get_rep_sup_id_name?region='+region+'&zone='+zone+'&area='+area+'&territory='+territory)
+    // alert(base_url+'web_order/get_rep_sup_id_name?client_id='+client_id)
+    // $.ajax({
+    //   // url: base_url+'web_order/get_rep_sup_id_name?region='+region+'&zone='+zone+'&area='+area+'&territory='+territory,
+    //   url: base_url+'web_order/get_rep_sup_id_name?client_id='+client_id,
+    //   success: function(recStr) {
+    //     // alert (recStr)
+    //     repListStr=recStr 
+    //   }
+    // }); 
+
+// =================================
+// $('#rep').keyup(function(){
+//       // alert('ok')
+//       //-------------------------
+//       var ref_list = repListStr.split(',');  
+//       var ref_name=$("#rep").val();
+//       // alert(ref_name)
+      
+//       //---------------- auto complete combo list
+//       var ref_list_new=new Array();
+//       lc=0;
+//       i =0;
+//       var refStr="";        
+//       while (i < ref_list.length)
+//       {
+//         refStr=ref_list[i];
+//         i=i+1;          
+//         var res=refStr.toUpperCase().match(ref_name.toUpperCase());
+//         if (res!=null){
+//           ref_list_new[lc]=refStr;
+//           lc=lc+1;
+//           if (lc==30){
+//             break;
+//           };
+//         }else{
+//           continue;
+//         }         
+//       };
+      
+//       //-------------- auto complete source
+//       $( "input#rep" ).autocomplete({
+//         source: ref_list_new
+//       });
+    
+//     }); 
+// ================================================ REP SUP ID AUTO COMPLETE END =======================================
+
+
+// ================================================ CLIENT ID AUTO COMPLETE START =======================================
+// var clientListStr="";  
+//    var depot = $("#depot").val();
+//     // alert(base_url+'web_order/get_client_id_name?depot='+depot)
+//     $.ajax({
+//       url: base_url+'web_order/get_client_id_name?depot='+depot,
+//       success: function(retStr) {
+//         // alert (retStr)
+//         clientListStr=retStr 
+//       }
+//     }); 
+
+// // =================================
+// $('#client').keyup(function(){
+//       // alert('ok')
+//       //-------------------------
+//       var ref_list = clientListStr.split(',');  
+//       var ref_name=$("#client").val();
+//       // alert(ref_name)
+      
+//       //---------------- auto complete combo list
+//       var ref_list_new=new Array();
+//       lc=0;
+//       i =0;
+//       var refStr="";        
+//       while (i < ref_list.length)
+//       {
+//         refStr=ref_list[i];
+//         i=i+1;          
+//         var res=refStr.toUpperCase().match(ref_name.toUpperCase());
+//         if (res!=null){
+//           ref_list_new[lc]=refStr;
+//           lc=lc+1;
+//           if (lc==30){
+//             break;
+//           };
+//         }else{
+//           continue;
+//         }         
+//       };
+      
+//       //-------------- auto complete source
+//       $( "input#client" ).autocomplete({
+//         source: ref_list_new
+//       });
+    
+//     }); 
+// ================================================ CLIENT ID AUTO COMPLETE END =======================================
+
+
+
+});
+
+// ----------------------------------- AUTO FILL STOCK QUANTITY FOR ITEM ---------------------------------------
+
+function get_stock_qty(){
+  var item_id=$("#item_id").val().split('|')[0];
+  var item_id_n=$("#item_id").val() 
+
+  // alert(base_url+'web_order/get_stock_qty?item_id='+item_id)
+  $.ajax({
+
+    url: base_url+'web_order/get_stock_qty?item_id='+item_id,
+    success: function(data) {
+
+      var itemdataArray = data.split('|');
+      var stock_qty = itemdataArray[0];
+      var quantity = itemdataArray[1];
+      var item_per_unit = itemdataArray[2];
+    
+    $("#stock_qty").val(stock_qty);
+    $("#depot_stock_qty").val(quantity);
+    $("#item_per_unit").val(item_per_unit);
+  }
+  }); 
+
+}
+
+// ----------------------------------- AUTO FILL NAME, GENDER, AGE FOR COUNTER CUSTOMER START ---------------------------------
+
+function get_client_level_info(){
+  var client_id=$("#client").val();
+  // alert(phone)
+  // alert(base_url+'web_order/get_level_info?client_id='+client_id)
+  $.ajax({
+    url: base_url+'web_order/get_level_info?client_id='+client_id,
+    success: function(data) {
+    
+      var dataArray = data.split('|');
+      var region_id = dataArray[0];
+      var region_name = dataArray[1];
+      var zone_id = dataArray[2];
+      var zone_name = dataArray[3];
+      var area_id = dataArray[4];
+      var area_name = dataArray[5];
+      var territory_id = dataArray[6];
+      var territory_name = dataArray[7];
+      
+      $("#region").val(region_id+' | '+region_name);
+      $("#zone").val(zone_id+' | '+zone_name);
+      $("#area").val(area_id+' | '+area_name);
+      $("#territory").val(territory_id+' | '+territory_name);
+
+      $("#region_id").val(region_id);
+      $("#zone_id").val(zone_id);
+      $("#area_id").val(area_id);
+      $("#territory_id").val(territory_id);
+  }
+  }); 
+
+}
+// ----------------------------------- AUTO FILL NAME, GENDER, AGE FOR COUNTER CUSTOMER END ---------------------------------
+
+
+// ------------------- AUTO FILL CUSTOMER ID, NAME, PHONE GENDER, AGE FOR COUNTER CUSTOMER START ----------------------------
+
+function get_depot_all_customer_all_info(){
+  var depot=$("#depot").val();
+  alert(depot)
+  alert(base_url+'web_order/get_customer_info?depot='+depot)
+  $.ajax({
+
+    url: base_url+'counter/get_customer_info?depot='+depot,
+    success: function(data) {
+    
+      var dataArray = data.split('|');
+      var customer_id = dataArray[0];
+      var phone = dataArray[1];
+      var customer_name = dataArray[2];
+      var gender = dataArray[3];
+      var age = dataArray[4];
+
+      $("#customer_id").val(customer_id);
+      $("#phone").val(phone);
+      $("#customer_name").val(customer_name);
+      $("#gender").val(gender);
+      $("#age").val(age);
+  }
+  }); 
+
+}
+// ----------------------------------- AUTO FILL NAME, GENDER, AGE FOR COUNTER CUSTOMER END ---------------------------------
+
+
+
+// ----------------------------- COUNTER DISCOUNT TYPE SELECTION FUNCTION START -------------------------------------------
+
+// Function to update discount options based on physician selection
+function updateDiscountOptions() {
+  var physicianSelect = document.getElementById('physician_id');
+  var discountSelect = document.getElementById('discount_type_id');
+
+  // Get the selected physician value
+  var selectedPhysician = physicianSelect.value;
+
+  // Get the discount select options
+  var discountOptions = discountSelect.getElementsByTagName('option');
+
+  // Clear existing options
+  discountSelect.innerHTML = '';
+
+  // Create default discount options
+  var defaultOptions = [
+    { value: 'MRP', text: 'MRP' },
+    { value: 'COUNTER WHOLESALE', text: 'COUNTER WHOLESALE' },
+    { value: 'E-SHOP', text: 'E-SHOP' },
+    { value: 'HAMDARD FOUNDATION', text: 'HAMDARD FOUNDATION' },
+    { value: 'STAFF', text: 'STAFF' },
+    // Add other default options as needed
+  ];
+
+  // Create physician-specific discount options
+  var physicianOptions = [
+    { value: 'MRP', text: 'MRP' },
+    { value: 'FREEDOM FIGHTER', text: 'FREEDOM FIGHTER' },
+    { value: 'VIP', text: 'VIP' },
+    { value: 'STAFF', text: 'STAFF' },
+    // Add other physician-specific options as needed
+  ];
+
+  // Use default options if no physician is selected, otherwise use physician-specific options
+  var optionsToUse = selectedPhysician ? physicianOptions : defaultOptions;
+
+  // Create and append option elements based on the selected options
+  optionsToUse.forEach(function (optionData) {
+    var option = document.createElement('option');
+    option.value = optionData.value;
+    option.text = optionData.text;
+    discountSelect.appendChild(option);
+  });
+}
+
+// Call the function initially to set the correct discount options
+updateDiscountOptions();
+</script>  
+
+<script>
+// Function to show/hide the "Staff" row based on the selected discount type
+$(document).ready(function () {
+  $("#discount_type_id").change(function () {
+    var selectedDiscountType = $(this).val();
+    var staffRow = $("#staffRow");
+
+    if (selectedDiscountType === "STAFF") {
+      staffRow.show();
+    } else {
+      staffRow.hide();
+    }
+  });
+
+  // Call the change event handler initially to set the initial visibility
+  $("#discount_type_id").trigger("change");
+});
+
+// ----------------------------- COUNTER DISCOUNT TYPE SELECTION FUNCTION END -------------------------------------------
+
+</script>
+
+
+<table width="100%"  height="100%"   border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
+ 
+  <tr  height="1px" >
+    <td colspan="3" ></td>
+  </tr>
+
+  <tr>
+    <td>
+    <table border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
+      <tr height="30px" >
+        <td width="500" style="background-color:#FFFFFF;" >
+          <span class="blackCatTitle">&nbsp;New Order</span>
+        </td>
+        
+        <td width="500" >&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr  height="1px" style="background-color:#CCCCCC;">
+        <td colspan="3" ></td>
+      </tr>
+    </table>
+
+    <table width="100%" align="left" height="100%" border="0"  cellpadding="0" cellspacing="0" style="margin-left:auto;margin-right:auto;background-color:#F5F5F5; font-size: small;" >
+      <tr>
+        <td height="80%" valign="middle">
+                            <!-- INSERT-->
+      
+        <table width="100%" align="left" cellpadding="2" class="rounded_corner" style="background-color:#F5F5F5">
+          
+          
+          <tr>
+            <td width="100px" style="vertical-align: middle;">Name<font style="color:#B93976; font-size:20px">*</font></td>
+            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+            <td style="padding-top:5px">
+              {{if session.Name == '' or session.Name == 'None' or session.Name == None:}}
+              <input type="text" name="Name" id="Name" value="" placeholder="Name" style="width:200px" required />
+              {{else:}}
+              <input type="text" name="Name" id="Name" value="{{=session.Name}}" placeholder="Name" style="width:200px" required />
+              {{pass}}
+            </td>
+        
+          </tr>
+        
+          <tr>
+            <td width="100px" style="vertical-align: middle;">Mobile</td>
+            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+            <td style="padding-top:5px">
+              {{if session.mobile == '' or session.mobile == 'None' or session.mobile == None:}}
+              <input type="text" name="mobile" id="mobile" value="" placeholder="Mobile" style="width:200px" required />
+              {{else:}}
+              <input type="text" name="mobile" id="mobile" value="{{=session.mobile}}" placeholder="Mobile" style="width:200px" required />
+              {{pass}}
+            </td>
+          </tr>
+          <tr>
+            <td width="100px" style="vertical-align: middle;">Address</td>
+            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+            <td style="padding-top:5px">
+              {{if session.address == '' or session.address == 'None' or session.address == None:}}
+              <input type="text" name="address" id="address" value="" placeholder="Address" style="width:200px" required />
+              {{else:}}
+              <input type="text" name="address" id="address" value="{{=session.address}}" placeholder="Address" style="width:200px" required />
+              {{pass}}
+            </td>
+          </tr>
+          
+          </tr>
+        </table>
+          
+
+        
+    
+
+        <table  cellpadding="1" cellspacing="2" class="sample_border"  >
+          
+          <tr class="blackCatHead" style="background-color: #c4e3ec;">
+            <td width="300px" style="vertical-align: middle; padding-left: 10px; height: 30px;">Item</td>
+            <!-- <td width="300px" style="vertical-align: middle; padding-left: 10px; height: 30px;">Stock Quantity</td>
+            <td width="300px" style="vertical-align: middle; padding-left: 10px; height: 30px;">Price</td>
+            <td width="300px" style="vertical-align: middle; padding-left: 10px; height: 30px;">Vat</td>
+            <td width="300px" style="vertical-align: middle; padding-left: 10px; height: 30px;">Amount</td> -->
+            <td width="80px"  style="vertical-align: middle;">QTY</td>
+            
+          </tr>
+          <form  name="form2" id="orderForm" onsubmit="addOrder(event)">
+              <td><input type="text" name="order_item" id="item_id" autocomplete="off" required</td>
+              <td><input type="number" name="quantity_id" id ="quantity_id" autocomplete="off"></td>
+              <td></td>
+              <td><input type="submit" name="save_single_order" id="save_single_order" value="Add Order"></td>
+          </form>
+          <form  name="form1" action="{{=URL(c='web_order',f='save_order')}}" method="post" onsubmit="submitOrders(event)" >
+            {{if len(item_data) > 0:}}
+            {{for item in item_data:}}
+            <!-- <tr style="background-color: #f5f5f5;"> -->
+              <!-- <td style="vertical-align: middle; padding-left: 10px;">{{=item["name"]}}</td> -->
+              <!-- <td style="vertical-align: middle; padding-left: 10px;">{{#=item["price"]}}</td>
+              <td style="vertical-align: middle; padding-left: 10px;">{{#=item["vat_amt"]}}</td>
+              <td style="vertical-align: middle; padding-left: 10px;">{{#=item["total_amt"]}}</td> -->
+              <!-- <td><input type="number" name="quantity_{{=item['id']}}"autocomplete="off"></td> -->
+              <tr style="background-color: #f5f5f5;">
+                <td style="vertical-align: middle; padding-left: 10px;">{{=item["name"]}}</td>
+                <td><input type="number" name="quantity_{{=item['id']}}" id="quantity_{{=item['id']}}" autocomplete="off" onblur="updateOrder({{=item['id']}}, '{{=item['name']}}')"></td>
+            </tr>
+            
+            <!-- </tr> -->
+            {{pass}}
+            {{pass}}
+
+            <tr height="1px" style="background-color:#CCCCCC;">
+              <td colspan="20"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><input type="submit" name="save" id="save" value="Save Order"></td>
+            </tr>
+          
+          </form>
+          <form name="form3" id="orderSubmissionForm" action="{{=URL(c='web_order',f='new_web_order_entry')}}" method="post">
+            <input type="hidden" name="orders_json" id="orders_json">
+            <button type="submit" name="save_order" id="save_order">Submit Orders to Server</button>
+        </form>
+         
+    </table>
+  </td>
+  </tr>
+        
+</table>
+
+<!-- <script>
+  document.getElementById('orderForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      // Get the values from the input fields
+      var orderItem = document.getElementById('item_id').value;
+      var quantity = document.getElementById('quantity_id').value;
+
+      // Create a JavaScript object with these values
+      var orderData = {
+          orderItem: orderItem,
+          quantity: quantity
+      };
+
+      // Convert the JavaScript object to a JSON string
+      var orderJson = JSON.stringify(orderData);
+
+      // Output the JSON string (you can replace this with your own logic)
+      console.log(orderJson);
+  });
+</script> -->
+
+<!-- <script>
+  var orders = {}; // Object to store multiple items by item ID
+
+  function updateOrder(itemId, itemName) {
+      // Get the quantity from the input field
+      var quantity = parseInt(document.getElementById('quantity_' + itemId).value, 10);
+
+      // Check if the quantity is a valid number and greater than zero
+      if (!isNaN(quantity) && quantity > 0) {
+          // Check if the item already exists in the orders object
+          if (orders[itemId]) {
+              // If it exists, update the quantity
+              orders[itemId].quantity = quantity;
+          } else {
+              // If it doesn't exist, add it to the orders object
+              orders[itemId] = {
+                  name: itemName,
+                  quantity: quantity
+              };
+          }
+      } else {
+          // If the quantity is invalid or zero, remove the item from the orders object
+          delete orders[itemId];
+      }
+
+      // Convert the orders object to a JSON string
+      var ordersJson = JSON.stringify(orders);
+
+      // Output the JSON string (you can replace this with your own logic)
+      console.log(ordersJson);
+  }
+</script> -->
+<script>
+  var orders = {}; // Object to store multiple items by item ID
+
+  function updateOrder(itemId, itemName) {
+      // Get the quantity from the input field
+      var quantity = parseInt(document.getElementById('quantity_' + itemId).value, 10);
+
+      // Check if the quantity is a valid number and greater than zero
+      if (!isNaN(quantity) && quantity > 0) {
+          // Check if the item already exists in the orders object
+          // alert.log(orders[itemId]);
+          if (orders[itemId]== itemName) {
+              // If it exists, update the quantity
+              orders[itemId].quantity = quantity;
+          } else {
+              // If it doesn't exist, add it to the orders object
+              orders[itemId] = {
+                  name: itemName,
+                  quantity: quantity
+              };
+          }
+      } else {
+          // If the quantity is invalid or zero, remove the item from the orders object
+          delete orders[itemId];
+      }
+
+      // Convert the orders object to a JSON string
+      var ordersJson = JSON.stringify(orders);
+
+      // Output the JSON string (you can replace this with your own logic)
+      console.log(ordersJson);
+  }
+
+  function addOrder(event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      // Get the values from the input fields
+      var itemName = document.getElementById('item_id').value;
+      var quantity = parseInt(document.getElementById('quantity_id').value, 10);
+      if (!isNaN(itemName)) {
+          // Generate a new item ID (for demonstration, using Date.now())
+          alert("Please enter a valid name.");
+      } 
+      // Check if the quantity is a valid number and greater than zero
+      if (!isNaN(quantity) && quantity > 0) {
+          // Generate a new item ID (for demonstration, using Date.now())
+          var itemId = 'new_' + Date.now();
+
+          // Add the new item to the orders object
+          orders[itemId] = {
+              name: itemName,
+              quantity: quantity
+          };
+
+          // Convert the orders object to a JSON string
+          var ordersJson = JSON.stringify(orders);
+
+          // Output the JSON string (you can replace this with your own logic)
+          console.log(ordersJson);
+
+          // Clear the input fields for the next entry
+          document.getElementById('item_id').value = '';
+          document.getElementById('quantity_id').value = '';
+      } else {
+          alert("Please enter a valid quantity.");
+      }
+  }
+  function submitOrders(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Convert the orders object to a JSON string
+            var ordersJson = JSON.stringify(orders);
+            console.log(ordersJson);
+            // Set the value of the hidden input field to the orders JSON
+            document.getElementById('orders_json').value = ordersJson;
+
+            // Submit the form to the server
+            document.getElementById('orderSubmissionForm').submit();
+        }
+</script>

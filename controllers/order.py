@@ -74,8 +74,9 @@ def add_order_sl():
     last_sl_query = f"SELECT `sl` FROM `sm_order_head` WHERE cid='{cid}' ORDER BY sl DESC;"
     last_sl = db.executesql(last_sl_query,as_dict=True)
 
-    last_order_sl=last_sl[0]['sl']
-    order_sl = int(last_order_sl)+1
+    last_order_sl = last_order[0]['sl'] if last_order else 0
+    last_order_sl =last_order_sl+1
+    
     rep_name=session.name
     order_date =str(date_fixed)[0:10]
     # return order_date
@@ -123,34 +124,24 @@ def order_details():
     #     limitby = ((page* items_per_page), items_per_page)
     # # --------end paging
 
-    depot_id=''
-    depot_name=''    
+       
     req_sl=request.vars.req_sl    
     rowid=0
     # Depot ID
     
     invoice_no=''
     status='Submitted'  #'Draft'
-    client_id=''
-    rep_id=''
-    order_date=''
-    delivery_date=''
+    
     order_datetime=str(date_fixed)[0:19]
     payment_mode=''
     note=''
     
     client_name=''
-    rep_name=''
+    
     visit_sl=0
     invoice_ref=0
     
-    level0_id=''
-    level0_name=''
-    level1_id=''
-    level1_name=''
-    level2_id=''
-    level2_name=''
-    level3_id=''
+    
     level3_name=''
 
     h_record_sql = f"SELECT * FROM `sm_order_head` WHERE cid='{cid}' and sl = '{req_sl}' LIMIT 1;"
@@ -182,13 +173,14 @@ def order_details():
         level2_name=h_record[0]['level2_name']
         level3_id=h_record[0]['level3_id']
         level3_name=h_record[0]['level3_name']
+        mobile_no=h_record[0]['mobile_no']
 
     record_sql = f"SELECT * FROM `sm_order` WHERE cid='{cid}' and sl = '{req_sl}' order by item_name"
     # return record_sql
     record = db.executesql(record_sql,as_dict=True)
     
     
-    return dict(rowid=rowid,visit_sl=visit_sl,records=record,depot_id=depot_id,depot_name=depot_name,sl=sl,invoice_ref=invoice_ref,client_id=client_id,rep_id=rep_id,client_name=client_name,rep_name=rep_name,order_date=order_date,order_datetime=order_datetime,delivery_date=delivery_date,status=status,level0_id=level0_id,level0_name=level0_name,level1_id=level1_id,level1_name=level1_name,level2_id=level2_id,level2_name=level2_name,level3_id=level3_id,level3_name=level3_name,payment_mode=payment_mode,note=note,page=page)
+    return dict(rowid=rowid,visit_sl=visit_sl,records=record,sl=req_sl,client_name=client_name,status=status,level3_name=level3_name,payment_mode=payment_mode,note=note,mobile_no=mobile_no,page=page)
     
    
     # return dict(itemRows=itemRows,order_sl=order_sl,page=page)
@@ -301,7 +293,7 @@ def order():
     last_order_sql = f"select sl from sm_order_head where cid='{cid}' order by id desc limit 1;"
     # return last_order_sql
     last_order = db.executesql(last_order_sql, as_dict = True)
-    last_order_sl = last_order[0]['sl'] if last_order else '0'
+    last_order_sl = last_order[0]['sl'] if last_order else 0
     last_order_sl =last_order_sl+1
     # return last_order_sl
     
@@ -371,7 +363,8 @@ def show_order():
     # return req_sl
     #--------------- Title
     response.title='Preview Order'
-    #-------------
+    #-------------Page Title/Company Name.
+    session.cName='XYZ'
 
     #----------- 
     
@@ -393,6 +386,7 @@ def show_order():
         req_note = row['note']
         status = row['status']
         level3_name = row['level3_name']
+        mobile_no = row['mobile_no']
         order_datetime = row['order_datetime']
 
     
@@ -408,7 +402,7 @@ def show_order():
 
     
     return dict(showList=detailRecords,sl=sl,order_datetime=order_datetime,
-                client_name=client_name,payment_mode=payment_mode,req_note=req_note,level3_name=level3_name,status=status)
+                client_name=client_name,payment_mode=payment_mode,req_note=req_note,level3_name=level3_name,mobile_no=mobile_no,status=status)
 
 
 

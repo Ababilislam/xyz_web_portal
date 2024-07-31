@@ -110,13 +110,13 @@
                                 {{if session.user_type == "Admin" or session.user_type == "ADMIN" or session.user_type == "ADMIN":}}
                                <!-- <td align="right" hidden > -->
                                <td align="right"  >
-                               <a href="{{=URL(c='web_order',f='save_order',vars=dict(req_sl=last_order_sl))}}">
+                               <a href="{{=URL(c='web_order',f='new_web_order_entry',vars=dict(req_sl=last_order_sl))}}">
                                       <input type="button" name="btn_download" id="btn_download" value="+ New Order" style="border-radius: 4px; height: 30px;" class="button_update"/>
                                      </a> 
                                {{pass}}
                                 {{if session.user_type == "User" or session.user_type == "USER" or session.user_type == "user":}}
                                <td align="right" >
-                               <a href="{{=URL(c='web_order',f='save_order',vars=dict(req_sl=last_order_sl))}}">
+                               <a href="{{=URL(c='web_order',f='new_web_order_entry',vars=dict(req_sl=last_order_sl))}}">
                                       <input type="button" name="btn_download" id="btn_download" value="+ New Order" style="border-radius: 4px; height: 30px;" class="button_update"/>
                                      </a> 
                                {{pass}}
@@ -151,6 +151,7 @@
                                     area_name=str(records_ov_dict["area_name"])
                                     mobile_no=str(records_ov_dict["mobile_no"])
                                     status=str(records_ov_dict["status"])              
+                                    address=str(records_ov_dict["level3_name"])              
                                 }}
                                 
                                 <tr  align="left" class="blackCat"  style=" font-size:13px"> 
@@ -164,7 +165,7 @@
                                     
                                     <td width="110" >{{=mobile_no}}</td>
                                     <!-- address -->
-                                    <td width="110" >{{=area_name}}</td>     
+                                    <td width="110" >{{=address}}</td>     
                                     
 
                                     <td width="70" align="center"  >{{=status}}</td>

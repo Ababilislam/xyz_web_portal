@@ -123,27 +123,22 @@
 
                                             <tr>
                                                 <td width="120">B.O.SL</td>
-                                                <td>:&nbsp;<input type="text" name="sl" id="sl" value="{{=sl}}"
-                                                        style="width:300px" readonly /></td>
+                                                <td>:&nbsp;{{=sl}}</td>
+                                                <td hidden><input type="text" name="sl" id="sl" value="{{=sl}}"
+                                                        style="width:300px"  /></td>
                                             </tr>
 
                                             <tr>
                                                 <td width="120">Name</td>
-                                                <td>:
-                                                    {{if client_id=='' or client_id==None:}}
+                                                <td>: {{=client_name}}
+                                                    
 
-                                                    <input type="text" name="client_id" id="client_id" size="25"
-                                                        value="" placeholder="Select Client" autocomplete="off"
-                                                        style="width:300px" />
-
-                                                    {{else:}}
-
-                                                    <input type="text" name="client_id" id="client_id" size="25"
-                                                        value="{{=client_id}}|{{=client_name}}"
+                                                    <input type="hidden" name="client_id" id="client_id" size="25"
+                                                        value="{{=client_name}}"
                                                         placeholder="Select Client" autocomplete="off"
                                                         style="width:300px;background-color:#F7F7F7;" readonly />
 
-                                                    {{pass}}
+                                                    
 
                                                 </td>
 
@@ -152,10 +147,7 @@
 
                                                 <td width="120">Mobile</td>
 
-                                                <td width="300">:
-
-
-                                                    {{=note}}
+                                                <td width="300">: {{=mobile_no}}
 
                                                 </td>
 
@@ -167,18 +159,19 @@
                                         <table class="blackCat">
                                             <tr>
                                                 <td width="120">Status</td>
-                                                <td width="300">:&nbsp;<input type="text" name="status" id="status"
-                                                        value="{{=status}}" readonly /></td>
+                                                <td width="300">: {{=status}}</td>
+                                                <td width="300" hidden>:&nbsp;<input type="text" name="status" id="status"
+                                                        value="{{=status}}"/></td>
                                             </tr>
                                             <tr>
-                                                <td width="120">Payment Mode</td>
+                                                <!-- <td width="120">Payment Mode</td>
                                                 <td width="300">:
                                                     {{=payment_mode}}
-                                                </td>
+                                                </td> -->
                                             </tr>
                                             <tr>
                                                 <td width="120">Address</td>
-                                                <td align="left">:{{=level3_name}}</td>
+                                                <td align="left">: {{=level3_name}}</td>
                                             </tr>
                                         </table>
                                     </td>
@@ -189,14 +182,14 @@
                                     class="sample_border">
                                     <tr align="left" class="blackCatHead" height="20px" >
                                         <td align="left">Name</td>
-                                        <td width="60" align="left">Item ID </td>
-                                        <td width="80" align="center">Category</td>
+                                        <!-- <td width="60" align="left">Item ID </td>
+                                        <td width="80" align="center">Category</td> -->
                                         <td width="50" align="right">Qty</td>
                                         <td width="80" align="right">TP</td>
                                         <td width="60" align="right">Vat</td>
                                         <td width="100" align="right">Total</td>
                                         <td width="100" align="right">Item Total </td>
-                                        <td width="30">&nbsp;</td>
+                                        
 
                                     </tr>
 
@@ -216,8 +209,8 @@
                                     {{ p=p%2 }}
                                     <tr align="left" class="blackCat" style="vertical-align:middle">
                                         <td align="left">{{=item_name}}</td>
-                                        <td width="60" align="left">{{=item_id}}</td>
-                                        <td width="80" align="center">{{=category_id}}</td>
+                                        <!-- <td width="60" align="left">{{=item_id}}</td> -->
+                                        <!-- <td width="80" align="center">{{=category_id}}</td> -->
                                         <td width="50" align="right">{{=quantity}}</td>
                                         <td width="80" align="right">{{=price}}</td>
                                         <td width="60" align="right">{{=item_vat}}</td>
@@ -228,15 +221,11 @@
                                             {{ gross_total += round(item_total, 2) }} </td>
                                         <form id="form2" name="form2" method="post"
                                             action="{{=URL(c='order_invoice',f='delete_order_item',args=[sl,item_id])}}">
-                                            <td width="30">
-                                                {{if ((status=='Submitted') or (status=='Invoiced') or
-                                                (status=='Cancelled') or (status=='Blocked') or
-                                                (access_permission!=True)):}}
-                                                &nbsp;
-                                                {{else:}}
+                                            <td width="30" hidden>
+                                                
                                                 <input type="submit" name="btn_delete" id="btn_delete" value="X"
                                                     class="button_update" />
-                                                {{pass}}
+                                                
                                             </td>
 
                                         </form>
@@ -251,9 +240,7 @@
 
                                         <td align="left">&nbsp;</td>
 
-                                        <td width="60" align="left">&nbsp;</td>
-
-                                        <td width="80" align="center">&nbsp;</td>
+                                        
 
                                         <td width="50" align="right">&nbsp;</td>
 
@@ -263,7 +250,7 @@
 
                                         <td align="right"><strong>{{= round(gross_total, 2) }}</strong></td>
 
-                                        <td width="30">&nbsp;</td>
+                                        
 
                                     </tr>
 

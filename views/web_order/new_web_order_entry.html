@@ -1,5 +1,392 @@
 {{extend 'layout.html'}}
 
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+<script>
+  var base_url = location.protocol + "//" + location.hostname + (location.port ? ":" + location.port : "") + "/{{=request.application}}/";
+
+  $(function () {
+      var zmStr = '';
+      var dataArray = [];
+
+      $.ajax({
+          url: base_url + 'web_order/get_item_name',
+          success: function (retStr) {
+              zmStr = retStr;
+              dataArray = zmStr.split(',').map(function(item) {
+                  return {name: item, qty: ''};
+              });
+
+              // Show all items initially
+              populateTable(dataArray);
+
+              $('#item_search').keyup(function () {
+                  var ref_name = $("#item_search").val().toUpperCase();
+
+                  // Filter the dataArray
+                  var filteredDataArray = dataArray.filter(function(item) {
+                      return item.name.toUpperCase().includes(ref_name);
+                  });
+
+                  populateTable(filteredDataArray);
+              });
+          }
+      });
+
+      function populateTable(items) {
+          var tableBody = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+          tableBody.innerHTML = ""; // Clear existing rows
+
+          items.forEach(function(item) {
+              var row = tableBody.insertRow();
+              var cell1 = row.insertCell(0);
+              var cell2 = row.insertCell(1);
+
+              cell1.innerHTML = '<input type="text" name="item_name" value="' + item.name + '" readonly>';
+              
+              // Preserve the quantity value
+              var qtyValue = item.qty || '';
+              cell2.innerHTML = '<input type="number" name="quantity_' + item.name + '" value="' + qtyValue + '" placeholder="qty" onchange="updateQuantity(\'' + item.name + '\', this.value)">';
+          });
+      }
+
+      // Function to update quantity in dataArray
+      window.updateQuantity = function(itemName, qty) {
+          var item = dataArray.find(function(i) { return i.name === itemName; });
+          if (item) {
+              item.qty = qty;
+          }
+      };
+  });
+</script>
+<script>
+var base_url=location.protocol + "//" + location.hostname + (location.port && ":" + location.port) + "/{{=request.application}}/";
+
+$(function() {
+ 
+// ================================================ ITEM ID AUTO COMPLETE START =======================================
+employeeListStr="";  
+    // alert(base_url+'web_order/get_item_list')  
+    $.ajax({
+      url: base_url+'web_order/get_item_list',
+      success: function(retStr) {
+        employeeListStr=retStr 
+      }
+    }); 
+
+    $('#item_id').keyup(function(){
+      $("#stock_qty").html('')
+
+      // alert(employeeListStr)
+      localStorage.employeeListStr=employeeListStr
+      valueList = employeeListStr.split(','); 
+      var searchValue=$("#item_id").val();
+      var valueList_new=new Array();
+      lc=0;
+      i =0;
+      var valueStr="";    
+      while (i < valueList.length)
+      {
+        valueStr=valueList[i];
+        i=i+1;  
+        // alert ('fgdf')       
+        var ret=valueStr.toUpperCase().match(searchValue.toUpperCase());
+
+        if (ret!=null){
+          valueList_new[lc]=valueStr;
+          lc=lc+1;
+          if (lc==30){
+            break;
+          };
+        }else{
+          continue;
+        }         
+      }; 
+
+       //-------------- auto complete source
+      $( "input#item_id" ).autocomplete({
+        source: valueList_new
+      });  
+      
+      }); 
+
+// ================================================ ITEM AUTO COMPLETE END ================================================
+
+
+
+// ================================================ REP SUP ID AUTO COMPLETE START =======================================
+var repListStr="";  
+    var client_id = $("#client").val();
+    // var region = $("#region_id").val();
+    // var zone = $("#zone_id").val();
+    // var area = $("#area_id").val();
+    // var territory = $("#territory_id").val();
+    // alert(base_url+'web_order/get_rep_sup_id_name?region='+region+'&zone='+zone+'&area='+area+'&territory='+territory)
+    // alert(base_url+'web_order/get_rep_sup_id_name?client_id='+client_id)
+    $.ajax({
+      // url: base_url+'web_order/get_rep_sup_id_name?region='+region+'&zone='+zone+'&area='+area+'&territory='+territory,
+      url: base_url+'web_order/get_rep_sup_id_name?client_id='+client_id,
+      success: function(recStr) {
+        // alert (recStr)
+        repListStr=recStr 
+      }
+    }); 
+
+// =================================
+$('#rep').keyup(function(){
+      // alert('ok')
+      //-------------------------
+      var ref_list = repListStr.split(',');  
+      var ref_name=$("#rep").val();
+      // alert(ref_name)
+      
+      //---------------- auto complete combo list
+      var ref_list_new=new Array();
+      lc=0;
+      i =0;
+      var refStr="";        
+      while (i < ref_list.length)
+      {
+        refStr=ref_list[i];
+        i=i+1;          
+        var res=refStr.toUpperCase().match(ref_name.toUpperCase());
+        if (res!=null){
+          ref_list_new[lc]=refStr;
+          lc=lc+1;
+          if (lc==30){
+            break;
+          };
+        }else{
+          continue;
+        }         
+      };
+      
+      //-------------- auto complete source
+      $( "input#rep" ).autocomplete({
+        source: ref_list_new
+      });
+    
+    }); 
+// ================================================ REP SUP ID AUTO COMPLETE END =======================================
+
+
+// ================================================ CLIENT ID AUTO COMPLETE START =======================================
+var clientListStr="";  
+   var depot = $("#depot").val();
+    // alert(base_url+'web_order/get_client_id_name?depot='+depot)
+    $.ajax({
+      url: base_url+'web_order/get_client_id_name?depot='+depot,
+      success: function(retStr) {
+        // alert (retStr)
+        clientListStr=retStr 
+      }
+    }); 
+
+// =================================
+$('#client').keyup(function(){
+      // alert('ok')
+      //-------------------------
+      var ref_list = clientListStr.split(',');  
+      var ref_name=$("#client").val();
+      // alert(ref_name)
+      
+      //---------------- auto complete combo list
+      var ref_list_new=new Array();
+      lc=0;
+      i =0;
+      var refStr="";        
+      while (i < ref_list.length)
+      {
+        refStr=ref_list[i];
+        i=i+1;          
+        var res=refStr.toUpperCase().match(ref_name.toUpperCase());
+        if (res!=null){
+          ref_list_new[lc]=refStr;
+          lc=lc+1;
+          if (lc==30){
+            break;
+          };
+        }else{
+          continue;
+        }         
+      };
+      
+      //-------------- auto complete source
+      $( "input#client" ).autocomplete({
+        source: ref_list_new
+      });
+    
+    }); 
+// ================================================ CLIENT ID AUTO COMPLETE END =======================================
+
+
+
+});
+
+// ----------------------------------- AUTO FILL STOCK QUANTITY FOR ITEM ---------------------------------------
+
+function get_stock_qty(){
+  var item_id=$("#item_id").val().split('|')[0];
+  var item_id_n=$("#item_id").val() 
+
+  // alert(base_url+'web_order/get_stock_qty?item_id='+item_id)
+  $.ajax({
+
+    url: base_url+'web_order/get_stock_qty?item_id='+item_id,
+    success: function(data) {
+
+      var itemdataArray = data.split('|');
+      var stock_qty = itemdataArray[0];
+      var quantity = itemdataArray[1];
+      var item_per_unit = itemdataArray[2];
+    
+    $("#stock_qty").val(stock_qty);
+    $("#depot_stock_qty").val(quantity);
+    $("#item_per_unit").val(item_per_unit);
+  }
+  }); 
+
+}
+
+// ----------------------------------- AUTO FILL NAME, GENDER, AGE FOR COUNTER CUSTOMER START ---------------------------------
+
+function get_client_level_info(){
+  var client_id=$("#client").val();
+  // alert(phone)
+  // alert(base_url+'web_order/get_level_info?client_id='+client_id)
+  $.ajax({
+    url: base_url+'web_order/get_level_info?client_id='+client_id,
+    success: function(data) {
+    
+      var dataArray = data.split('|');
+      var region_id = dataArray[0];
+      var region_name = dataArray[1];
+      var zone_id = dataArray[2];
+      var zone_name = dataArray[3];
+      var area_id = dataArray[4];
+      var area_name = dataArray[5];
+      var territory_id = dataArray[6];
+      var territory_name = dataArray[7];
+      
+      $("#region").val(region_id+' | '+region_name);
+      $("#zone").val(zone_id+' | '+zone_name);
+      $("#area").val(area_id+' | '+area_name);
+      $("#territory").val(territory_id+' | '+territory_name);
+
+      $("#region_id").val(region_id);
+      $("#zone_id").val(zone_id);
+      $("#area_id").val(area_id);
+      $("#territory_id").val(territory_id);
+  }
+  }); 
+
+}
+// ----------------------------------- AUTO FILL NAME, GENDER, AGE FOR COUNTER CUSTOMER END ---------------------------------
+
+
+// ------------------- AUTO FILL CUSTOMER ID, NAME, PHONE GENDER, AGE FOR COUNTER CUSTOMER START ----------------------------
+
+function get_depot_all_customer_all_info(){
+  var depot=$("#depot").val();
+  alert(depot)
+  alert(base_url+'web_order/get_customer_info?depot='+depot)
+  $.ajax({
+
+    url: base_url+'counter/get_customer_info?depot='+depot,
+    success: function(data) {
+    
+      var dataArray = data.split('|');
+      var customer_id = dataArray[0];
+      var phone = dataArray[1];
+      var customer_name = dataArray[2];
+      var gender = dataArray[3];
+      var age = dataArray[4];
+
+      $("#customer_id").val(customer_id);
+      $("#phone").val(phone);
+      $("#customer_name").val(customer_name);
+      $("#gender").val(gender);
+      $("#age").val(age);
+  }
+  }); 
+
+}
+// ----------------------------------- AUTO FILL NAME, GENDER, AGE FOR COUNTER CUSTOMER END ---------------------------------
+
+
+
+// ----------------------------- COUNTER DISCOUNT TYPE SELECTION FUNCTION START -------------------------------------------
+
+// Function to update discount options based on physician selection
+function updateDiscountOptions() {
+  var physicianSelect = document.getElementById('physician_id');
+  var discountSelect = document.getElementById('discount_type_id');
+
+  // Get the selected physician value
+  var selectedPhysician = physicianSelect.value;
+
+  // Get the discount select options
+  var discountOptions = discountSelect.getElementsByTagName('option');
+
+  // Clear existing options
+  discountSelect.innerHTML = '';
+
+  // Create default discount options
+  var defaultOptions = [
+    { value: 'MRP', text: 'MRP' },
+    { value: 'COUNTER WHOLESALE', text: 'COUNTER WHOLESALE' },
+    { value: 'E-SHOP', text: 'E-SHOP' },
+    { value: 'HAMDARD FOUNDATION', text: 'HAMDARD FOUNDATION' },
+    { value: 'STAFF', text: 'STAFF' },
+    // Add other default options as needed
+  ];
+
+  // Create physician-specific discount options
+  var physicianOptions = [
+    { value: 'MRP', text: 'MRP' },
+    { value: 'FREEDOM FIGHTER', text: 'FREEDOM FIGHTER' },
+    { value: 'VIP', text: 'VIP' },
+    { value: 'STAFF', text: 'STAFF' },
+    // Add other physician-specific options as needed
+  ];
+
+  // Use default options if no physician is selected, otherwise use physician-specific options
+  var optionsToUse = selectedPhysician ? physicianOptions : defaultOptions;
+
+  // Create and append option elements based on the selected options
+  optionsToUse.forEach(function (optionData) {
+    var option = document.createElement('option');
+    option.value = optionData.value;
+    option.text = optionData.text;
+    discountSelect.appendChild(option);
+  });
+}
+
+// Call the function initially to set the correct discount options
+updateDiscountOptions();
+</script>  
+
+<script>
+// Function to show/hide the "Staff" row based on the selected discount type
+$(document).ready(function () {
+  $("#discount_type_id").change(function () {
+    var selectedDiscountType = $(this).val();
+    var staffRow = $("#staffRow");
+
+    if (selectedDiscountType === "STAFF") {
+      staffRow.show();
+    } else {
+      staffRow.hide();
+    }
+  });
+
+  // Call the change event handler initially to set the initial visibility
+  $("#discount_type_id").trigger("change");
+});
+
+// ----------------------------- COUNTER DISCOUNT TYPE SELECTION FUNCTION END -------------------------------------------
+
+</script>
 
 
 <table width="100%"  height="100%"   border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
@@ -15,9 +402,7 @@
         <td width="500" style="background-color:#FFFFFF;" >
           <span class="blackCatTitle">&nbsp;New Order</span>
         </td>
-        <form action="{{=URL(c='order',f='order',args=[page])}}" method="post">
-          <td width="400" align="right"><input name="" type="submit"  value="Back"/></td>
-          </form>
+        
         <td width="500" >&nbsp;</td>
         <td>&nbsp;</td>
       </tr>
@@ -30,7 +415,7 @@
       <tr>
         <td height="80%" valign="middle">
                             <!-- INSERT-->
-      <form  name="form1" action="{{=URL(c='web_order',f='new_web_order_entry')}}" method="post"  >
+      <form  name="form1" action="{{=URL(c='web_order',f='save_order',vars=dict(req_sl=last_order_sl))}}" method="post"  >
         <table width="100%" align="left" cellpadding="2" class="rounded_corner" style="background-color:#F5F5F5">
           
           
@@ -69,73 +454,45 @@
               {{pass}}
             </td>
           </tr>
-          
-          </tr>
+
         </table>
-          
 
-        
-    </form>
+          <table>
+            <div style="width: 20px;"> </div>
+            <tr hight="20"></tr>
+            <tr >
+              <br>
+              <td width="100px" style="margin-top: 20px; padding-top: 20px;">Search by</td>
+              <td width="10px" style="vertical-align: middle;font-size: 20px; margin-top: 20px; padding-top: 20px;">:</td>
+              <td><input type="text" autocomplete="off" name="item_search" id="item_search" placeholder="Item Name" style="width: 200px; margin-top: 20px;"></td>
+            </tr>
+          </table>
 
-        <table  border="1" cellpadding="1" cellspacing="2" class="sample_border"  >
-
-          <tr class="blackCatHead" style="background-color: #c4e3ec;">
-            <td width="300px" style="vertical-align: middle; padding-left: 10px; height: 30px;">Item</td>
-            <td width="80px"  style="vertical-align: middle;">QTY</td>
-            
-          </tr>
-
-          {{#if len(order_temp_record) > 0:}}
-          {{#
-            for i in range(len(order_temp_record)):
-                records_ov_dict=order_temp_record[i]  
-                record_id=str(records_ov_dict["id"]) 
-                item_name=str(records_ov_dict["item_name"])
-                quantity= records_ov_dict["quantity"]
-          }}
-
-        <tr  align="left" class="blackCat"  style="vertical-align:middle">
-          
-            <td style="vertical-align: middle;padding-left: 5px">{{#=item_name}}</td>
-            <td style="vertical-align: middle;"><input type="number"></td>
-            
-            {{#pass}}
-          </tr>
-
-          
-
-          <tr style="border:none">
-           <td colspan="10" style="height:30px;border: none;">&nbsp;&nbsp;</td>
-          </tr>
-
-          <tr class="blackCat">
-            <form  name="form2" action="{{=URL(c='web_order',f='new_web_order_entry', args = [order_sl])}}" method="post"  >
-              <td colspan="2"  align="left" width="120px" style="vertical-align: middle;border: none;padding-left: 10px;">
-                <input  type="submit" name="cancel_btn" id="cancel_btn" value="Order Cancel" style="vertical-align:middle;height:35px;background-color: #CA786B;color: #FFFFFF; width:120px;" />
-              </td>
-            </form>
-            <form  name="form2" action="{{=URL(c='web_order',f='new_web_order_entry', args = [order_sl, net_total ])}}" method="post"  >
-              <td colspan="6"  width="120px" align="right" style="vertical-align: middle; border: none;">
-                <input  type="submit" name="submit_all_btn" id="submit_all_btn" value="Submit" style="vertical-align:middle;height:35px ; width:120px; background-color: #5C72F0;color: #FFFFFF;" />
-              </td>
-            </form>
-          </tr>
-            {{else:}}
-          <tr >
-             <td></td>
-             <td></td>
+          <table id="dataTable" cellpadding="1" cellspacing="2" class="sample_border"  >
               
-          </tr>
-            {{pass}}
-          <tr>
-            <td height="300px">&nbsp; &nbsp; &nbsp; &nbsp;</td>
-          </tr>
+              <thead>
+                <tr class="blackCatHead" style="background-color: #c4e3ec;">
+                  <td width="300px" style="vertical-align: middle; padding-left: 10px; height: 30px;">Item</td>
+                  <td width="80px"  style="vertical-align: middle;">QTY</td>
+                  
+                </tr>
+              </thead>
+              <!-- the data get generated by js and place in tbody. -->
+              <tbody>
 
-          <tr height="1px" style="background-color:#CCCCCC;">
-            <td colspan="20"></td>
-          </tr>
-    </table>
+              </tbody>
 
+              <tr height="1px" style="background-color:#CCCCCC;">
+                <td colspan="20"></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td><input type="submit" name="save" id="save" value="Save Order" style="margin-left: 80px;"></td>
+              </tr>
+              
+            
+          </table>
+      </form>
   </td>
   </tr>
         

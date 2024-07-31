@@ -3,7 +3,61 @@
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
 
+<script>
+var base_url=location.protocol + "//" + location.hostname + (location.port && ":" + location.port) + "/{{=request.application}}/";
+    
+    $(function () {
+    
+    
+    
+    $.ajax({
+        url: base_url + 'web_order/get_item_name',
+        success: function (retStr) {
+            zmStr = retStr
+            // alert (zmStr)
+        }
+    });
+    
+    
+    $('#item_name_input').keyup(function () {
+    
+        // alert("YES")
+        //-------------------------
+        var ref_list = zmStr.split(',');
+        var ref_name = $("#item_name_input").val();
+    
+        //---------------- auto complete combo list
+        var ref_list_new = new Array();
+        lc = 0;
+        i = 0;
+        var refStr = "";
+        while (i < ref_list.length) {
+            refStr = ref_list[i];
+            i = i + 1;
+            var res = refStr.toUpperCase().match(ref_name.toUpperCase());
+            if (res != null) {
+                ref_list_new[lc] = refStr;
+                lc = lc + 1;
+                if (lc == 30) {
+                    break;
+                };
+            } else {
+                continue;
+            }
+        };
+        //alert (ref_list_new);
+    
+        //-------------- auto complete source
+        $("input#item_name_input").autocomplete({
+            source: ref_list_new
+        });
+    
+    });
+    
+    });
 
+ 
+</script>
 
 <table width="100%"  height="100%"   border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
  
@@ -16,7 +70,7 @@
     <table border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
       <tr height="30px" >
         <td width="500" style="background-color:#FFFFFF;" >
-          <span class="blackCatTitle">&nbsp;New Order</span>
+          <span class="blackCatTitle">&nbsp;Order details</span>
         </td>
         
         <td width="500" >&nbsp;</td>
@@ -30,99 +84,118 @@
     <table width="100%" align="left" height="100%" border="0"  cellpadding="0" cellspacing="0" style="margin-left:auto;margin-right:auto;background-color:#F5F5F5; font-size: small;" >
       <tr>
         <td height="80%" valign="middle">
-                            <!-- INSERT-->
-      <form  name="form1" action="{{=URL(c='web_order',f='save_order')}}" method="post"  >
-        <table width="100%" align="left" cellpadding="2" class="rounded_corner" style="background-color:#F5F5F5">
+                            
+        <form  name="form1" action="{{=URL(c='web_order',f='save_order',vars=dict(req_sl=last_order_sl))}}" method="post"  >
+          <table width="100%" align="left" cellpadding="2" class="rounded_corner" style="background-color:#F5F5F5">
           
+            <tr>
+              <td width="100px" style="vertical-align: middle;">Client Name<font style="color:#B93976; font-size:20px">*</font></td>
+              <td width="10px" style="font-size: 20px;">:</td>
+              <td style="padding-top:5px">
+                {{if session.client_name == '' or session.client_name == 'None' or session.client_name == None:}}
+                <input type="text" name="Name" id="Name" value="{{=client_name}}" placeholder="Name" style="width:200px" readonly />
+                {{else:}}
+                <input type="text" name="Name" id="Name" value="{{=session.client_name}}" style="width:200px" readonly />
+                {{pass}}
+              </td>
+            </tr>
           
-          <tr>
-            <td width="100px" style="vertical-align: middle;">Name<font style="color:#B93976; font-size:20px">*</font></td>
-            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
-            <td style="padding-top:5px">
-              {{if session.Name == '' or session.Name == 'None' or session.Name == None:}}
-              <input type="text" name="Name" id="Name" value="" placeholder="Name" style="width:200px" required />
-              {{else:}}
-              <input type="text" name="Name" id="Name" value="{{=session.Name}}" placeholder="Name" style="width:200px" required />
-              {{pass}}
-            </td>
+            <tr>
+              <td width="100px" style="vertical-align: middle;">Mobile</td>
+              <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+              <td style="padding-top:5px">
+                {{if session.mobile == '' or session.mobile == 'None' or session.mobile == None:}}
+                <input type="text" name="mobile" id="mobile"value="{{=mobile}}" style="width:200px" readonly />
+                {{else:}}
+                <input type="text" name="mobile" id="mobile" value="{{=session.mobile}}" style="width:200px" readonly />
+                {{pass}}
+              </td>
+            </tr>
+            <tr>
+              <td width="100px" style="vertical-align: middle;">Address</td>
+              <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+              <td style="padding-top:5px">
+                {{if session.address == '' or session.address == 'None' or session.address == None:}}
+                <input type="text" name="address" id="address" value="{{=address}}" placeholder="Address" style="width:200px" readonly />
+                {{else:}}
+                <input type="text" name="address" id="address" value="{{=session.address}}" placeholder="Address" style="width:200px" readonly />
+                {{pass}}
+              </td>
+            </tr>
+            
+            <tr style="background-color: #f5f5f5;">
+              <td> Add Item</td>
+              <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
+              <td style="width: 200px;">
+                <input type="text" name="item_name_input" id="item_name_input" placeholder="select item name" autocomplete="off" style="width: 200px;"/>
+              </td>
+              
+              <td><input type="number" name="qty_input"autocomplete="off" placeholder="qty" style="width: 100px;"/>
+                &nbsp;
+                <input type="submit" name="single_save" id="single_save" value="Add Item"/></td>
+              <td></td>
+            
+            </tr>
+          </table>
+        </form>    
+
+      <table  border="1" cellpadding="1" cellspacing="2" class="sample_border">
         
-          </tr>
-        
-          <tr>
-            <td width="100px" style="vertical-align: middle;">Mobile</td>
-            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
-            <td style="padding-top:5px">
-              {{if session.mobile == '' or session.mobile == 'None' or session.mobile == None:}}
-              <input type="text" name="mobile" id="mobile" value="" placeholder="Mobile" style="width:200px" required />
-              {{else:}}
-              <input type="text" name="mobile" id="mobile" value="{{=session.mobile}}" placeholder="Mobile" style="width:200px" required />
-              {{pass}}
-            </td>
-          </tr>
-          <tr>
-            <td width="100px" style="vertical-align: middle;">Address</td>
-            <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
-            <td style="padding-top:5px">
-              {{if session.address == '' or session.address == 'None' or session.address == None:}}
-              <input type="text" name="address" id="address" value="" placeholder="Address" style="width:200px" required />
-              {{else:}}
-              <input type="text" name="address" id="address" value="{{=session.address}}" placeholder="Address" style="width:200px" required />
-              {{pass}}
-            </td>
-          </tr>
+        <tr class="blackCatHead" style="background-color: #c4e3ec;">
+          <td width="300px" style="vertical-align: middle; padding-left: 10px; height: 30px;">Item Name</td>
+          <td width="80px"  style="vertical-align: middle;">Stock QTY</td>
+          <td width="80px"  style="vertical-align: middle;">Order QTY</td>
+          <td width="80px"  style="vertical-align: middle;">Price</td>
+          <td width="80px"  style="vertical-align: middle;">Vat</td>
+          <td width="80px"  style="vertical-align: middle;">Total Amt</td>
+          <td colspan="2" width="80px"  style="vertical-align: middle;">Action</td>
+        </tr>
+        {{if len(temp_data)>0:}}
+        {{for data in temp_data:
+        rec_id =data["id"]
+        item =data["name"]
+        stock_quantity =data["stock_quantity"]
+        price =data["price"]
+        vat =data["vat"]
+        total_amt=(data['price']+data['vat'])*data['order_qty']
+        }}
+        <form  name="form2" action="{{=URL(c='web_order',f='save_order',vars=dict(req_sl=last_order_sl))}}" method="post">
+        <tr style="background-color: #f5f5f5;">
+          <td style="vertical-align: middle; padding-left: 10px;">{{=item}}</td>
+          <td style="vertical-align: middle; padding-left: 10px;">{{=stock_quantity}}</td>
+                      
+          <td><input type="number" name="qty" value="{{=data['order_qty']}}"/></td>
+          <td style="vertical-align: middle; padding-left: 10px;">{{=price}}</td>
+          <td width="80px"  style="vertical-align: middle;">{{=vat}}</td>
           
-          </tr>
+          <td width="80px"  style="vertical-align: middle;">{{=total_amt}}</td>
+          <td hidden ><input type="text" name="order_item_{{data}}" value="{{=item}}"/></td>
+          
+          <td style="vertical-align: middle;">
+            <input type="hidden" name="record_id" id="record_id" value="{{=data['id']}}" />
+            <input type="submit" name="update_btn" id="update_btn" value="Update" class="button_update" />
+            <input type="submit" name="delete_btn" id="delete_btn" value="X" class="button_update" style="border: 1px solid black; background: rgb(240, 237, 237); color: red;"/>
+          </td>
+        
+        </tr>
+        </form>
+
+        {{pass}}
+        {{pass}}
         </table>
-          
-
-        
-    
-
-        <table  border="1" cellpadding="1" cellspacing="2" class="sample_border"  >
-          
-          <tr class="blackCatHead" style="background-color: #c4e3ec;">
-            <td width="300px" style="vertical-align: middle; padding-left: 10px; height: 30px;">Item</td>
-            <td width="80px"  style="vertical-align: middle;">QTY</td>
-            <td></td>
-            
-          </tr>
-          
-         
-          <tr style="background-color: #f5f5f5;">
-            <td style="vertical-align: middle; padding-left: 10px;">single item entry</td>
-            <td><input type="number" name=""autocomplete="off"></td>
-            <td><input type="submit" name="save" id="save" value="Save Order"></td>
-           
-          </tr>
-          
-
-
-          
-          <tr class="blackCatHead" style="background-color: #c4e3ec;">
-            <td width="300px" style="vertical-align: middle; padding-left: 10px; height: 30px;">Item</td>
-            <td width="80px"  style="vertical-align: middle;">QTY</td>
-            
-          </tr>
-          {{if len(temp_data)>0:}}
-          {{for data in temp_data:}}
-          <tr style="background-color: #f5f5f5;">
-            <td style="vertical-align: middle; padding-left: 10px;">{{=data["name"]}}</td>
-            <td>{{=data["qty"]}}</td>
-            <td>update</td>
-
-           
-          </tr>
-          {{pass}}
-          {{pass}}
+        <form  name="form2" action="{{=URL(c='web_order',f='save_order',vars=dict(req_sl=last_order_sl))}}" method="post">
+          <br>
+          <table width="100%" align="left" height="100%" border="0"  cellpadding="0" cellspacing="0" style="margin-left:auto;margin-right:auto;background-color:#F5F5F5; font-size: small;" >
           <tr>
-            <td><input type="submit" name="save" id="save" value="Cancel Order"></td>
-            <td><input type="submit" name="save" id="save" value="Submit Order"></td>
+            <td><input type="submit" name="cancel_order" id="save" value="Cancel Order"></td>
+            <td><input type="submit" name="submit_order" id="save" value="Submit Order"></td>
           </tr>
+        </form>
+          
           
           
          
     </table>
-  </form>
   </td>
   </tr>
         
