@@ -164,7 +164,7 @@
                         &nbsp;&nbsp;<a href="{{=URL(args=[page-1])}}">previous</a> |
                         {{pass}}
                         
-                        {{if total_rec>items_per_page:}}
+                        {{if total_rec>((page+1)*items_per_page):}}
                         &nbsp;&nbsp;<a href="{{=URL(args=[page+1])}}">next</a>
                         {{pass}}
                     </td>

@@ -143,52 +143,76 @@ var base_url=location.protocol + "//" + location.hostname + (location.port && ":
         
         <tr class="blackCatHead" style="background-color: #c4e3ec;">
           <td width="300px" style="vertical-align: middle; padding-left: 10px; height: 30px;">Item Name</td>
-          <td width="80px"  style="vertical-align: middle;">Stock QTY</td>
-          <td width="80px"  style="vertical-align: middle;">Order QTY</td>
-          <td width="80px"  style="vertical-align: middle;">Price</td>
-          <td width="80px"  style="vertical-align: middle;">Vat</td>
-          <td width="80px"  style="vertical-align: middle;">Total Amt</td>
-          <td colspan="2" width="80px"  style="vertical-align: middle;">Action</td>
+          <td width="80px"  style="vertical-align: middle;" align="right">Stock QTY</td>
+          <td width="80px"  style="vertical-align: right;">Order QTY</td>
+          <td width="80px" align="right">Price</td>
+          <td width="80px"  align="right">Vat</td>
+          <td width="80px" align="right">Total Amt</td>
+          <td colspan="2" width="80px" align="center" >Action</td>
         </tr>
+
+        <!-- #t.id, t.name, t.order_qty, i.stock_quantity, i.price, i.vat_amt -->
+         {{ ordqty =0 
+          stock_quantity =0
+          sub_total=0
+          btnstatus=""  
+        }}
         {{if len(temp_data)>0:}}
         {{for data in temp_data:
         rec_id =data["id"]
         item =data["name"]
         stock_quantity =data["stock_quantity"]
         price =data["price"]
-        vat =data["vat"]
-        total_amt=(data['price']+data['vat'])*data['order_qty']
+        vat =data["vat_amt"]
+        total_amt=(data['price']+data['vat_amt'])*data['order_qty']
+        ordqty = data['order_qty']
+        sub_total += total_amt
         }}
         <form  name="form2" action="{{=URL(c='web_order',f='save_order',vars=dict(req_sl=last_order_sl))}}" method="post">
         <tr style="background-color: #f5f5f5;">
           <td style="vertical-align: middle; padding-left: 10px;">{{=item}}</td>
-          <td style="vertical-align: middle; padding-left: 10px;">{{=stock_quantity}}</td>
-                      
-          <td><input type="number" name="qty" value="{{=data['order_qty']}}"/></td>
-          <td style="vertical-align: middle; padding-left: 10px;">{{=price}}</td>
-          <td width="80px"  style="vertical-align: middle;">{{=vat}}</td>
+          <td style="vertical-align: middle; padding-left: 10px;" align="right">{{=stock_quantity}}</td>
+          {{if ordqty>stock_quantity:
+            btnstatus="disabled"  
+          }}            
+            <td><input type="number" name="qty" align="right" value="{{=data['order_qty']}}" style="color: red;" min="0"/></td>
+          {{else:}}
+            <td><input type="number" name="qty" align="right" value="{{=data['order_qty']}}" min="0"/></td>
+          {{pass}}
           
-          <td width="80px"  style="vertical-align: middle;">{{=total_amt}}</td>
-          <td hidden ><input type="text" name="order_item_{{data}}" value="{{=item}}"/></td>
+          <td style="vertical-align: middle; padding-left: 10px;" align="right">{{=price}}</td>
+          <td width="80px"  style="vertical-align: middle;" align="right">{{=vat}}</td>
+          
+          <td width="80px"  style="vertical-align: middle;" align="right">{{=total_amt}}</td>
+          <td hidden ><input type="text" name="order_item_{{data}}" value="{{=item}}" align="right"/></td>
           
           <td style="vertical-align: middle;">
             <input type="hidden" name="record_id" id="record_id" value="{{=data['id']}}" />
+            <input type="hidden" name="record_name" id="record_name" value="{{=item}}" />
             <input type="submit" name="update_btn" id="update_btn" value="Update" class="button_update" />
-            <input type="submit" name="delete_btn" id="delete_btn" value="X" class="button_update" style="border: 1px solid black; background: rgb(240, 237, 237); color: red;"/>
+            <input type="submit" name="delete_btn" id="delete_btn" value="X" class="button_update" style="border: 1px solid black; background: rgb(240, 237, 237); color: red;" onclick="if (!confirm('Do you really want to Delete this item?')) { return false }"/>
           </td>
         
         </tr>
         </form>
 
         {{pass}}
+        <tr> 
+          <td colspan="5" align="right">Total</td>
+          <td width="80px"  style="vertical-align: middle;" align="right">{{=sub_total}}</td>
+        </tr>
         {{pass}}
         </table>
         <form  name="form2" action="{{=URL(c='web_order',f='save_order',vars=dict(req_sl=last_order_sl))}}" method="post">
           <br>
           <table width="100%" align="left" height="100%" border="0"  cellpadding="0" cellspacing="0" style="margin-left:auto;margin-right:auto;background-color:#F5F5F5; font-size: small;" >
           <tr>
-            <td><input type="submit" name="cancel_order" id="save" value="Cancel Order"></td>
+            <td><input type="submit" name="cancel_order" id="save" value="Cancel Order"onclick="if (!confirm('Do you really want to cancle this order?')) { return false }"></td>
+            {{if btnstatus=="disabled" :}} 
+            <td><input type="submit" name="submit_order" id="save" value="Submit Order" disabled></td>
+            {{else:}}
             <td><input type="submit" name="submit_order" id="save" value="Submit Order"></td>
+            {{pass}}
           </tr>
         </form>
           

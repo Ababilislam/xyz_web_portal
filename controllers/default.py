@@ -2,7 +2,7 @@
 import urllib.parse, random, string
 
 def index():
-    session.clear()
+    # session.clear()
     return dict()
    
 def login():
@@ -49,6 +49,7 @@ def check_user():
 
         elif len(check_user_type)==0:
             session.flashmsg = 'Invalid User !'
+            session.flash = 'Invalid User !'
             # return session.flashmsg
             redirect(URL('index'))
 

@@ -114,7 +114,7 @@ def item():
     
     session.condition=condition
    
-    return dict(itemRows=itemRows,page=page,items_per_page=items_per_page,total_rec=total_rec,)
+    return dict(itemRows=itemRows,page=page,items_per_page=items_per_page,total_rec=total_rec)
 
 
 def item_edit():

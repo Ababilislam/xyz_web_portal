@@ -261,40 +261,29 @@ def order():
    
     
     if btn_filter_order:
+        # return "aa"
         order_date = request.vars.order_date
         # return order_date
-        search_mobile = request.vars.search_mobile
-        search_sl=request.vars.search_sl
-        search_name=request.vars.search_name
-        search_status=request.vars.search_status
+        mobile = request.vars.mobile
+        # return mobile
+        # return order_date, mobile
+        # return item_id_filter
         
         # if order_date !="" or order_date != None:
         if order_date:
-            session.order_date = order_date
             condition += f" and order_date ='{order_date}'"
-        if search_sl:
-            session.search_sl=search_sl
-            condition += f" and sl ='{search_sl}'"
-        if search_name:
-            session.search_name=search_name
-            condition += f" and client_name ='{search_name}'"
-        if search_status:
-            session.search_status=search_status
-            condition += f" and status='{search_status}'"
-        if search_mobile:
-            session.search_mobile = search_mobile
-            condition += f" and mobile_no='{search_mobile}'"
+        if mobile:
+            # return "ab"
+            condition += f" and mobile_no='{mobile}'"
 
+        session.order_date = order_date
+        session.mobile = mobile
         session.condition=condition
         # return condition
     if btn_all:
         condition = ""
         session.order_date = ""
-        session.search_mobile = ""
-        session.search_status = ""
-        session.search_name=""
-        session.search_sl=""
-
+        session.mobile = ""
 
     order_sl_sql = f"select * from sm_order_head where cid='{cid}' {condition} order by sl DESC limit %d, %d;" % limitby
     # return order_sl_sql
@@ -454,51 +443,5 @@ def get_all_item_list():
             retStr = name +"|" + str(price)
         else:
             retStr += ',' + name +"|" + str(price)
-
-    return retStr
-
-
-
-def get_client_list():
-    retStr = ''
-    cid = session.cid
-    # return cid
-    
-    sql_query = f"SELECT client_name from sm_order_head where cid = '{cid}'  GROUP by client_name order by client_name;"
-
-    rows = db.executesql(sql_query, as_dict = True)
-
-
-    for idx in range(len(rows)):
-       
-        name = rows[idx]['client_name']
-       
-        if retStr == '':
-            retStr =  name
-        else:
-            retStr += ',' + name
-
-    return retStr
-
-
-
-def get_mobile_list():
-    retStr = ''
-    cid = session.cid
-    # return cid
-    
-    sql_query = f"SELECT mobile_no from sm_order_head where cid = '{cid}'  GROUP by mobile_no order by mobile_no;"
-
-    rows = db.executesql(sql_query, as_dict = True)
-
-
-    for idx in range(len(rows)):
-       
-        name = rows[idx]['mobile_no']
-       
-        if retStr == '':
-            retStr =  name
-        else:
-            retStr += ',' + name
 
     return retStr

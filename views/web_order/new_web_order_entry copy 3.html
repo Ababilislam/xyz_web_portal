@@ -2,8 +2,9 @@
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
-
 <script>
+  var base_url = location.protocol + "//" + location.hostname + (location.port ? ":" + location.port : "") + "/{{=request.application}}/";
+
   $(function () {
       var zmStr = '';
       var dataArray = [];
@@ -41,11 +42,11 @@
               var cell1 = row.insertCell(0);
               var cell2 = row.insertCell(1);
 
-              cell1.innerHTML = '<input type="text" id="item_name" name="item_name" style="width:280px;" value="' + item.name + '" readonly>';
+              cell1.innerHTML = '<input type="text" name="item_name" value="' + item.name + '" readonly>';
               
               // Preserve the quantity value
               var qtyValue = item.qty || '';
-              cell2.innerHTML = '<input type="number" min="0" id="item_qty" name="quantity_' + item.name + '" value="' + qtyValue + '" placeholder="Quantity" onchange="updateQuantity(\'' + item.name + '\', this.value)">';
+              cell2.innerHTML = '<input type="number" name="quantity_' + item.name + '" value="' + qtyValue + '" placeholder="qty" onchange="updateQuantity(\'' + item.name + '\', this.value)">';
           });
       }
 
@@ -56,24 +57,6 @@
               item.qty = qty;
           }
       };
-
-      // Handle form submission
-      $('#orderForm').submit(function(event) {
-          // Clear previous hidden inputs
-          $('input[type="hidden"]').remove();
-          $(item_name).remove();
-          $(item_qty).remove();
-
-          // Create hidden inputs for each item in dataArray
-          dataArray.forEach(function(item) {
-              if (item.qty) {
-                  $('#orderForm').append('<input type="hidden" name="item_name" value="' + item.name + '">');
-                  $('#orderForm').append('<input type="hidden" name="quantity_' + item.name + '" value="' + item.qty + '">');
-              }
-          });
-
-          return true; // Proceed with form submission
-      });
   });
 </script>
 <script>
@@ -383,7 +366,27 @@ function updateDiscountOptions() {
 updateDiscountOptions();
 </script>  
 
+<script>
+// Function to show/hide the "Staff" row based on the selected discount type
+$(document).ready(function () {
+  $("#discount_type_id").change(function () {
+    var selectedDiscountType = $(this).val();
+    var staffRow = $("#staffRow");
 
+    if (selectedDiscountType === "STAFF") {
+      staffRow.show();
+    } else {
+      staffRow.hide();
+    }
+  });
+
+  // Call the change event handler initially to set the initial visibility
+  $("#discount_type_id").trigger("change");
+});
+
+// ----------------------------- COUNTER DISCOUNT TYPE SELECTION FUNCTION END -------------------------------------------
+
+</script>
 
 
 <table width="100%"  height="100%"   border="0" cellspacing="0" cellpadding="0" style="background-color:#FFFFFF;" >
@@ -412,7 +415,7 @@ updateDiscountOptions();
       <tr>
         <td height="80%" valign="middle">
                             <!-- INSERT-->
-      <form  name="form1" id="orderForm" action="{{=URL(c='web_order',f='save_order',vars=dict(req_sl=last_order_sl))}}" method="post"  >
+      <form  name="form1" action="{{=URL(c='web_order',f='save_order',vars=dict(req_sl=last_order_sl))}}" method="post"  >
         <table width="100%" align="left" cellpadding="2" class="rounded_corner" style="background-color:#F5F5F5">
           
           
@@ -434,9 +437,9 @@ updateDiscountOptions();
             <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
             <td style="padding-top:5px">
               {{if session.mobile == '' or session.mobile == 'None' or session.mobile == None:}}
-              <input type="text" name="mobile" id="mobile" value="" placeholder="Mobile" style="width:200px"  />
+              <input type="text" name="mobile" id="mobile" value="" placeholder="Mobile" style="width:200px" required />
               {{else:}}
-              <input type="text" name="mobile" id="mobile" value="{{=session.mobile}}" placeholder="Mobile" style="width:200px"  />
+              <input type="text" name="mobile" id="mobile" value="{{=session.mobile}}" placeholder="Mobile" style="width:200px" required />
               {{pass}}
             </td>
           </tr>
@@ -445,9 +448,9 @@ updateDiscountOptions();
             <td width="10px" style="vertical-align: middle;font-size: 20px;">:</td>
             <td style="padding-top:5px">
               {{if session.address == '' or session.address == 'None' or session.address == None:}}
-              <input type="text" name="address" id="address" value="" placeholder="Address" style="width:200px"  />
+              <input type="text" name="address" id="address" value="" placeholder="Address" style="width:200px" required />
               {{else:}}
-              <input type="text" name="address" id="address" value="{{=session.address}}" placeholder="Address" style="width:200px"  />
+              <input type="text" name="address" id="address" value="{{=session.address}}" placeholder="Address" style="width:200px" required />
               {{pass}}
             </td>
           </tr>
@@ -470,7 +473,7 @@ updateDiscountOptions();
               <thead>
                 <tr class="blackCatHead" style="background-color: #c4e3ec;">
                   <td width="300px" style="vertical-align: middle; padding-left: 10px; height: 30px;">Item</td>
-                  <td width="80px"  style="vertical-align: middle;"> Quantity</td>
+                  <td width="80px"  style="vertical-align: middle;">QTY</td>
                   
                 </tr>
               </thead>
